@@ -28,6 +28,11 @@ List<String> monthKeysBetweenInclusive(DateTime start, DateTime end) {
   return keys;
 }
 
+/// Start of the cooperative accounting period for due calculations.
+DateTime duePeriodStart({int firstYear = 2025}) {
+  return DateTime(firstYear, 1, 1);
+}
+
 /// Years available for due/deposit month selection (newest first).
 List<int> availableYears({int firstYear = 2025}) {
   final currentYear = DateTime.now().year;

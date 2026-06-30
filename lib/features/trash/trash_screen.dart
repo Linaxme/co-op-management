@@ -7,8 +7,18 @@ import 'package:intl/intl.dart';
 import '../../core/utils/format_utils.dart';
 import '../../l10n/app_localizations.dart';
 
-final trashedMembersProvider = StreamProvider((ref) => ref.watch(repoProvider).watchTrashedMembers());
-final trashedDepositsProvider = StreamProvider((ref) => ref.watch(repoProvider).watchTrashedDeposits());
+final trashedMembersProvider = StreamProvider((ref) {
+  return coopScopedStream(
+    ref,
+    () => ref.watch(repoProvider).watchTrashedMembers(),
+  );
+});
+final trashedDepositsProvider = StreamProvider((ref) {
+  return coopScopedStream(
+    ref,
+    () => ref.watch(repoProvider).watchTrashedDeposits(),
+  );
+});
 
 class TrashScreen extends ConsumerStatefulWidget {
   const TrashScreen({super.key});

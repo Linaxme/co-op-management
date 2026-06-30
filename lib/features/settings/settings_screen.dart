@@ -20,10 +20,18 @@ import '../../widgets/admin_announcement_card.dart';
 import '../../widgets/notification_settings_card.dart';
 import '../../l10n/app_localizations.dart';
 
-final _orgProvider =
-    StreamProvider((ref) => ref.watch(repoProvider).watchOrganization());
-final _settingsProvider =
-    StreamProvider((ref) => ref.watch(repoProvider).watchSettings());
+final _orgProvider = StreamProvider((ref) {
+  return coopScopedStream(
+    ref,
+    () => ref.watch(repoProvider).watchOrganization(),
+  );
+});
+final _settingsProvider = StreamProvider((ref) {
+  return coopScopedStream(
+    ref,
+    () => ref.watch(repoProvider).watchSettings(),
+  );
+});
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -308,8 +316,6 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
         stats = await backupService.importBackupFromPath(picked.path!);
       }
 
-      ref.read(syncServiceProvider).forceSync();
-
       if (mounted) {
         final imported = (stats['members'] as int) + (stats['deposits'] as int);
         final merged =
@@ -554,7 +560,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                                     .usedInReceiptsAndReports,
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.grey.shade600,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 ),
                               ),
                               const SizedBox(height: 12),
@@ -567,7 +573,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                                       height: 100,
                                       decoration: BoxDecoration(
                                         border: Border.all(
-                                            color: Colors.grey.shade300),
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .outlineVariant,
+                                        ),
                                         borderRadius: BorderRadius.circular(8),
                                       ),
                                       child: _logoPath != null
@@ -579,16 +588,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                                               errorWidget:
                                                   const Icon(Icons.image),
                                             )
-                                          : const Column(
+                                          : Column(
                                               mainAxisAlignment:
                                                   MainAxisAlignment.center,
                                               children: [
-                                                Icon(Icons.add_photo_alternate,
-                                                    size: 32),
-                                                SizedBox(height: 4),
-                                                Text('Add Logo',
-                                                    style: TextStyle(
-                                                        fontSize: 12)),
+                                                Icon(
+                                                  Icons.add_photo_alternate,
+                                                  size: 32,
+                                                  color: Theme.of(context)
+                                                      .colorScheme
+                                                      .onSurfaceVariant,
+                                                ),
+                                                const SizedBox(height: 4),
+                                                Text(
+                                                  'Add Logo',
+                                                  style: Theme.of(context)
+                                                      .textTheme
+                                                      .bodySmall,
+                                                ),
                                               ],
                                             ),
                                     ),
@@ -634,7 +651,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                                 'Appears at the bottom of receipts',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.grey.shade600,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 ),
                               ),
                               const SizedBox(height: 12),
@@ -644,8 +661,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                                   width: double.infinity,
                                   height: 120,
                                   decoration: BoxDecoration(
-                                    border:
-                                        Border.all(color: Colors.grey.shade300),
+                                    border: Border.all(
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .outlineVariant),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                   child: _signaturePath != null
@@ -656,13 +675,24 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                                               BorderRadius.circular(8),
                                           errorWidget: const Icon(Icons.image),
                                         )
-                                      : const Column(
+                                      : Column(
                                           mainAxisAlignment:
                                               MainAxisAlignment.center,
                                           children: [
-                                            Icon(Icons.draw, size: 40),
-                                            SizedBox(height: 8),
-                                            Text('Tap to add signature image'),
+                                            Icon(
+                                              Icons.draw,
+                                              size: 40,
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurfaceVariant,
+                                            ),
+                                            const SizedBox(height: 8),
+                                            Text(
+                                              'Tap to add signature image',
+                                              style: Theme.of(context)
+                                                  .textTheme
+                                                  .bodyMedium,
+                                            ),
                                           ],
                                         ),
                                 ),
@@ -925,7 +955,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen>
                                 'Export all your data to a JSON file for backup. You can restore it later.',
                                 style: TextStyle(
                                   fontSize: 12,
-                                  color: Colors.grey.shade600,
+                                  color: Theme.of(context).colorScheme.onSurfaceVariant,
                                 ),
                               ),
                               const SizedBox(height: 12),

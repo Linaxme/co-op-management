@@ -10,7 +10,10 @@ import '../../widgets/cached_image_file.dart';
 import '../../l10n/app_localizations.dart';
 
 final membersListProvider = StreamProvider.family((ref, String q) {
-  return ref.watch(repoProvider).watchActiveMembers(query: q);
+  return coopScopedStream(
+    ref,
+    () => ref.watch(repoProvider).watchActiveMembers(query: q),
+  );
 });
 
 class MembersScreen extends ConsumerStatefulWidget {
@@ -132,14 +135,15 @@ class _MembersScreenState extends ConsumerState<MembersScreen> {
   }
 
   Widget _memberAvatar(Member m) {
+    final cs = Theme.of(context).colorScheme;
     final initial = m.name.isNotEmpty ? m.name[0].toUpperCase() : '?';
     final fallback = CircleAvatar(
       radius: 20,
-      backgroundColor: Colors.blue.shade50,
+      backgroundColor: cs.primaryContainer,
       child: Text(
         initial,
         style: TextStyle(
-          color: Colors.blue.shade700,
+          color: cs.onPrimaryContainer,
           fontWeight: FontWeight.bold,
         ),
       ),
@@ -162,7 +166,8 @@ class _MembersScreenState extends ConsumerState<MembersScreen> {
           errorWidget: fallback,
           placeholder: CircleAvatar(
             radius: 20,
-            backgroundColor: Colors.grey.shade200,
+            backgroundColor:
+                Theme.of(context).colorScheme.surfaceContainerHighest,
             child: const SizedBox(
               width: 18,
               height: 18,

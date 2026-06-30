@@ -397,7 +397,6 @@ class _MemberLoginFormState extends ConsumerState<_MemberLoginForm> {
               child: ListTile(
                 leading: _CoopLookupAvatar(lookup: _lookup!),
                 title: Text(_lookup!.name),
-                subtitle: Text(_lookup!.shortName),
                 trailing: TextButton(
                   onPressed: widget.loading ? null : _backToStep1,
                   child: Text(l10n.memberLoginChangeOrg),
@@ -467,11 +466,14 @@ class _CoopLookupAvatar extends StatelessWidget {
   }
 
   Widget _shortNameFallback(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final initial =
+        lookup.name.isNotEmpty ? lookup.name[0].toUpperCase() : '?';
     return CircleAvatar(
-      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+      backgroundColor: cs.primaryContainer,
       child: Text(
-        lookup.shortName,
-        style: const TextStyle(fontSize: 11),
+        initial,
+        style: TextStyle(fontSize: 11, color: cs.onPrimaryContainer),
       ),
     );
   }

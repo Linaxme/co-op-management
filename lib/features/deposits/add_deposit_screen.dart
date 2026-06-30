@@ -259,15 +259,21 @@ class _AddDepositScreenState extends ConsumerState<AddDepositScreen> {
                           Container(
                             margin: const EdgeInsets.only(bottom: 10),
                             decoration: BoxDecoration(
-                              color: Colors.pink.shade50,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primaryContainer
+                                  .withValues(alpha: 0.35),
                               borderRadius: BorderRadius.circular(12),
-                              border: Border.all(color: Colors.pink.shade200),
+                              border: Border.all(
+                                color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.4),
+                              ),
                             ),
                             padding: const EdgeInsets.all(12),
                             child: Row(
                               children: [
                                 Icon(Icons.person,
-                                    color: Colors.pink.shade700, size: 32),
+                                    color: Theme.of(context).colorScheme.primary,
+                                    size: 32),
                                 const SizedBox(width: 12),
                                 Expanded(
                                   child: Column(
@@ -276,19 +282,24 @@ class _AddDepositScreenState extends ConsumerState<AddDepositScreen> {
                                     children: [
                                       Text(
                                         selectedMember!.name,
-                                        style: TextStyle(
-                                          fontSize: 16,
-                                          fontWeight: FontWeight.bold,
-                                          color: Colors.pink.shade900,
-                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .titleMedium
+                                            ?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                       ),
                                       const SizedBox(height: 4),
                                       Text(
                                         'ID: ${selectedMember!.memberIdNumber}  •  Monthly: ${formatCurrencyCompact(selectedMember!.monthlyAmount)}',
-                                        style: TextStyle(
-                                          fontSize: 12,
-                                          color: Colors.pink.shade700,
-                                        ),
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodySmall
+                                            ?.copyWith(
+                                              color: Theme.of(context)
+                                                  .colorScheme
+                                                  .onSurfaceVariant,
+                                            ),
                                       ),
                                     ],
                                   ),

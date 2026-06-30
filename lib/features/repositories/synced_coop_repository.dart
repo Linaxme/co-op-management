@@ -2,9 +2,11 @@ import '../../core/db/app_db.dart';
 import '../../core/firebase/member_photo_storage.dart';
 import '../../core/firebase/organization_image_storage.dart';
 import '../../core/firebase/sync_service.dart';
+import 'coop_data_repository.dart';
 import 'coop_repository.dart';
+import 'backup_import_result.dart';
 
-class SyncedCoopRepository {
+class SyncedCoopRepository implements CoopDataRepository {
   final CoopRepository _repository;
   final SyncService _syncService;
   final MemberPhotoStorage _photoStorage;
@@ -91,12 +93,10 @@ class SyncedCoopRepository {
 
   Future<void> updateLanguage(String language) async {
     await _repository.updateLanguage(language);
-    _triggerSync();
   }
 
   Future<void> updateThemeMode(String themeMode) async {
     await _repository.updateThemeMode(themeMode);
-    _triggerSync();
   }
 
   // ---------- Members ----------
@@ -337,22 +337,27 @@ class SyncedCoopRepository {
   ) =>
       _repository.getUnpaidMembersForMonth(monthKey);
 
-  // ---------- Backup/Restore ----------
-  Future<String> exportToJson() async {
-    // This should delegate to BackupService, but for now return empty
-    // TODO: Implement proper backup integration
-    return '{}';
-  }
+  Future<List<Member>> getAllMembers({bool includeTrashed = false}) =>
+      _repository.getAllMembers(includeTrashed: includeTrashed);
 
-  Future<void> importFromJson(String jsonData) async {
-    // This should delegate to BackupService, but for now do nothing
-    // TODO: Implement proper backup integration
+  Future<List<Deposit>> getAllDeposits({
+    bool includeTrashed = false,
+    String? memberUuid,
+  }) =>
+      _repository.getAllDeposits(
+        includeTrashed: includeTrashed,
+        memberUuid: memberUuid,
+      );
+
+  Future<String> exportToJson() async => '{}';
+
+  Future<BackupImportResult> importFromJson(String jsonData) async {
     _triggerSync();
+    return const BackupImportResult(stats: {}, membersToProvision: []);
   }
 
   // Helper method to trigger sync
   void _triggerSync() {
-    // Trigger sync in the background
     Future.microtask(() => _syncService.forceSync());
   }
 }

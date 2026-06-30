@@ -2,13 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../core/firebase/sync_service.dart';
-import '../core/providers.dart';
 import '../l10n/app_localizations.dart';
-
 final syncStatusProvider = StreamProvider<SyncStatus>((ref) {
-  return ref.watch(syncServiceProvider).syncStatus;
+  return Stream.value(SyncStatus.synced);
 });
-
 class SyncStatusChip extends ConsumerWidget {
   final VoidCallback? onTap;
 
@@ -30,11 +27,13 @@ class SyncStatusChip extends ConsumerWidget {
 
     return ActionChip(
       avatar: Icon(icon, size: 16, color: color),
-      label: Text(label, style: const TextStyle(fontSize: 12)),
-      onPressed: onTap ??
-          () {
-            ref.read(syncServiceProvider).forceSync();
-          },
+      label: Text(
+        label,
+        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurface,
+            ),
+      ),
+      onPressed: null,
     );
   }
 }

@@ -87,14 +87,15 @@ final _memberDuePageProvider =
     FutureProvider.family<_MemberDuePageData, String>((ref, memberUuid) async {
   final repo = ref.read(repoProvider);
   final now = DateTime.now();
+  final dueStart = duePeriodStart();
   final settings = await repo.getSettings();
   final myDue = await repo.dueForOneMember(
     memberUuid: memberUuid,
-    start: DateTime(2025, 1, 1),
+    start: dueStart,
     endInclusive: now,
   );
   final dueSummary = await repo.dueSummaryAllMembers(
-    start: DateTime(2025, 1, 1),
+    start: dueStart,
     endInclusive: now,
   );
   final allMemberDues =

@@ -8,8 +8,12 @@ import '../../widgets/primary_button.dart';
 import '../../widgets/success_toast.dart' show showSuccessToast;
 import '../../l10n/app_localizations.dart';
 
-final _orgProvider =
-    StreamProvider((ref) => ref.watch(repoProvider).watchOrganization());
+final _orgProvider = StreamProvider((ref) {
+  return coopScopedStream(
+    ref,
+    () => ref.watch(repoProvider).watchOrganization(),
+  );
+});
 
 class ReportsScreen extends ConsumerStatefulWidget {
   const ReportsScreen({super.key});
@@ -318,7 +322,7 @@ class _ReportsScreenState extends ConsumerState<ReportsScreen> {
                           'Shows who paid and who did not pay for a specific month',
                           style: TextStyle(
                             fontSize: 12,
-                            color: Colors.grey.shade600,
+                            color: Theme.of(context).colorScheme.onSurfaceVariant,
                           ),
                         ),
                         const SizedBox(height: 16),

@@ -8,14 +8,12 @@ class OrgHeaderCard extends StatelessWidget {
   final String name;
   final String address;
   final String? logoPath;
-  final String? shortName;
 
   const OrgHeaderCard({
     super.key,
     required this.name,
     required this.address,
     this.logoPath,
-    this.shortName,
   });
 
   @override
@@ -50,16 +48,6 @@ class OrgHeaderCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(name, style: theme.textTheme.titleMedium),
-                if (shortName != null && shortName!.isNotEmpty) ...[
-                  const SizedBox(height: 2),
-                  Text(
-                    shortName!,
-                    style: theme.textTheme.labelMedium?.copyWith(
-                      color: theme.colorScheme.primary,
-                      letterSpacing: 1.2,
-                    ),
-                  ),
-                ],
                 if (address.trim().isNotEmpty) ...[
                   const SizedBox(height: 4),
                   Text(
@@ -78,9 +66,7 @@ class OrgHeaderCard extends StatelessWidget {
   }
 
   Widget _fallbackAvatar(ThemeData theme) {
-    final label = (shortName?.isNotEmpty == true)
-        ? shortName!
-        : (name.isNotEmpty ? name[0].toUpperCase() : '?');
+    final label = name.isNotEmpty ? name[0].toUpperCase() : '?';
     return CircleAvatar(
       radius: 26,
       backgroundColor: theme.colorScheme.primaryContainer,

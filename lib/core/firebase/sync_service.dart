@@ -32,6 +32,8 @@ class SyncService {
   StreamSubscription<List<ConnectivityResult>>? _connectivitySubscription;
   bool _isOnline = false;
   Timer? _syncTimer;
+  Timer? _syncDebounce;
+  final List<StreamSubscription<dynamic>> _realtimeSubscriptions = [];
   AuthSession _session = AuthSession.unauthenticated;
 
   void setSession(AuthSession session) {
@@ -46,6 +48,13 @@ class SyncService {
   Stream<SyncStatus> get syncStatus => _syncStatusController.stream;
 
   void _initConnectivity() {
+    if (kIsWeb) {
+      // connectivity_plus is unreliable in browsers — Firestore needs network anyway.
+      _isOnline = true;
+      _connectivitySubscription =
+          _connectivity.onConnectivityChanged.listen(_updateConnectivity);
+      return;
+    }
     _connectivity.checkConnectivity().then(_updateConnectivity);
     _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectivity);
@@ -53,7 +62,13 @@ class SyncService {
 
   void _updateConnectivity(List<ConnectivityResult> results) {
     final wasOnline = _isOnline;
-    _isOnline = results.any((result) => result != ConnectivityResult.none);
+    if (kIsWeb) {
+      _isOnline = results.isEmpty ||
+          results.any((result) => result != ConnectivityResult.none);
+      if (!_isOnline) _isOnline = true;
+    } else {
+      _isOnline = results.any((result) => result != ConnectivityResult.none);
+    }
 
     if (!wasOnline && _isOnline) {
       _syncStatusController.add(SyncStatus.connecting);
@@ -63,8 +78,99 @@ class SyncService {
     }
   }
 
+  bool get _canSync =>
+      _isOnline && _firebase.isAuthenticated && _coopId != null;
+
+  static bool _isPlaceholderOrg(OrganizationData org) {
+    return org.name == 'My Cooperative Society' &&
+        org.address == 'Address here' &&
+        (org.logoPath == null || org.logoPath!.trim().isEmpty) &&
+        (org.signaturePath == null || org.signaturePath!.trim().isEmpty);
+  }
+
+  Future<void> _applyFirestoreOrganization(
+    OrganizationData? localOrg,
+    FirestoreOrganization firestoreOrg,
+  ) async {
+    if (localOrg == null) {
+      await _db.into(_db.organization).insert(OrganizationCompanion.insert(
+        name: firestoreOrg.name,
+        shortName: Value(firestoreOrg.shortName),
+        address: firestoreOrg.address,
+        logoPath: Value(firestoreOrg.logoPath),
+        signaturePath: Value(firestoreOrg.signaturePath),
+        updatedAt: firestoreOrg.updatedAt,
+      ));
+      return;
+    }
+
+    await _db.update(_db.organization).replace(localOrg.copyWith(
+      name: firestoreOrg.name,
+      shortName: Value(firestoreOrg.shortName),
+      address: firestoreOrg.address,
+      logoPath: Value(firestoreOrg.logoPath),
+      signaturePath: Value(firestoreOrg.signaturePath),
+      updatedAt: firestoreOrg.updatedAt,
+    ));
+  }
+
+  Future<void> _applyFirestoreSettings(
+    SettingsData? localSettings,
+    FirestoreSettings firestoreSetting,
+    String coopId, {
+    bool preserveDevicePrefs = false,
+  }) async {
+    if (localSettings == null) {
+      await _db.into(_db.settings).insert(SettingsCompanion.insert(
+        defaultReceivedBy: firestoreSetting.defaultReceivedBy,
+        receiptPrefix: Value(firestoreSetting.receiptPrefix),
+        nextReceiptSerial: Value(firestoreSetting.nextReceiptSerial),
+        language: Value(firestoreSetting.language),
+        themeMode: Value(firestoreSetting.themeMode),
+        defaultMemberPassword: Value(firestoreSetting.defaultMemberPassword),
+        memberShowCoopTotalCollection:
+            Value(firestoreSetting.memberShowCoopTotalCollection),
+        memberShowCoopTotalDue: Value(firestoreSetting.memberShowCoopTotalDue),
+        memberShowDueMembersList:
+            Value(firestoreSetting.memberShowDueMembersList),
+        memberShowCoopCurrentMonth:
+            Value(firestoreSetting.memberShowCoopCurrentMonth),
+        tenantCoopId: Value(coopId),
+        updatedAt: firestoreSetting.updatedAt,
+      ));
+      return;
+    }
+
+    await _db.update(_db.settings).replace(localSettings.copyWith(
+      defaultReceivedBy: firestoreSetting.defaultReceivedBy,
+      receiptPrefix: firestoreSetting.receiptPrefix,
+      nextReceiptSerial: firestoreSetting.nextReceiptSerial,
+      language: preserveDevicePrefs
+          ? localSettings.language
+          : firestoreSetting.language,
+      themeMode: preserveDevicePrefs
+          ? localSettings.themeMode
+          : firestoreSetting.themeMode,
+      defaultMemberPassword: firestoreSetting.defaultMemberPassword,
+      memberShowCoopTotalCollection:
+          firestoreSetting.memberShowCoopTotalCollection,
+      memberShowCoopTotalDue: firestoreSetting.memberShowCoopTotalDue,
+      memberShowDueMembersList: firestoreSetting.memberShowDueMembersList,
+      memberShowCoopCurrentMonth: firestoreSetting.memberShowCoopCurrentMonth,
+      tenantCoopId: Value(coopId),
+      updatedAt: firestoreSetting.updatedAt,
+    ));
+  }
+
+  void _scheduleSyncAll() {
+    _syncDebounce?.cancel();
+    _syncDebounce = Timer(const Duration(milliseconds: 400), () {
+      if (_canSync) syncAll();
+    });
+  }
+
   Future<void> syncAll() async {
-    if (!_isOnline || !_firebase.isAuthenticated || _coopId == null) {
+    if (!_canSync) {
       _syncStatusController.add(SyncStatus.offline);
       return;
     }
@@ -88,21 +194,13 @@ class SyncService {
         await _ensureLegacyFirestoreCopied(_coopId!);
       }
 
-      if (_session.isMember) {
-        await Future.wait([
-          syncMembers(),
-          syncDeposits(),
-          syncOrganization(),
-          syncSettings(),
-        ]);
-      } else {
-        await Future.wait([
-          syncMembers(),
-          syncDeposits(),
-          syncOrganization(),
-          syncSettings(),
-        ]);
-      }
+      // Organization + settings first so branding is available before member data.
+      await syncOrganization();
+      await syncSettings();
+      await Future.wait([
+        syncMembers(),
+        syncDeposits(),
+      ]);
 
       await _notifyNewMemberDeposits(memberDepositUuidsBefore);
 
@@ -169,7 +267,11 @@ class SyncService {
     }
 
     if (!_isAdmin) {
-      await _pushOwnMemberRecord(localMembers, firestoreMembers);
+      try {
+        await _pushOwnMemberRecord(localMembers, firestoreMembers);
+      } catch (e) {
+        debugPrint('Member profile push skipped (server-managed): $e');
+      }
       return;
     }
 
@@ -302,25 +404,13 @@ class SyncService {
 
     if (coopDoc.exists) {
       final firestoreOrg = FirestoreOrganization.fromFirestore(coopDoc);
+      final shouldPullFromServer = !_isAdmin ||
+          localOrg == null ||
+          _isPlaceholderOrg(localOrg) ||
+          firestoreOrg.updatedAt.isAfter(localOrg.updatedAt);
 
-      if (localOrg == null) {
-        await _db.into(_db.organization).insert(OrganizationCompanion.insert(
-          name: firestoreOrg.name,
-          shortName: Value(firestoreOrg.shortName),
-          address: firestoreOrg.address,
-          logoPath: Value(firestoreOrg.logoPath),
-          signaturePath: Value(firestoreOrg.signaturePath),
-          updatedAt: firestoreOrg.updatedAt,
-        ));
-      } else if (firestoreOrg.updatedAt.isAfter(localOrg.updatedAt)) {
-        await _db.update(_db.organization).replace(localOrg.copyWith(
-          name: firestoreOrg.name,
-          shortName: Value(firestoreOrg.shortName),
-          address: firestoreOrg.address,
-          logoPath: Value(firestoreOrg.logoPath),
-          signaturePath: Value(firestoreOrg.signaturePath),
-          updatedAt: firestoreOrg.updatedAt,
-        ));
+      if (shouldPullFromServer) {
+        await _applyFirestoreOrganization(localOrg, firestoreOrg);
       } else if (localOrg.updatedAt.isAfter(firestoreOrg.updatedAt) && _isAdmin) {
         final pushedOrg = await _prepareOrganizationImagesForSync(coopId, localOrg);
         await coopDoc.reference.update(pushedOrg.toJson());
@@ -379,42 +469,17 @@ class SyncService {
 
     if (settingsDoc.exists) {
       final firestoreSetting = FirestoreSettings.fromFirestore(settingsDoc);
+      final shouldPullFromServer = !_isAdmin ||
+          localSettings == null ||
+          firestoreSetting.updatedAt.isAfter(localSettings.updatedAt);
 
-      if (localSettings == null) {
-        await _db.into(_db.settings).insert(SettingsCompanion.insert(
-          defaultReceivedBy: firestoreSetting.defaultReceivedBy,
-          receiptPrefix: Value(firestoreSetting.receiptPrefix),
-          nextReceiptSerial: Value(firestoreSetting.nextReceiptSerial),
-          language: Value(firestoreSetting.language),
-          themeMode: Value(firestoreSetting.themeMode),
-          defaultMemberPassword: Value(firestoreSetting.defaultMemberPassword),
-          memberShowCoopTotalCollection:
-              Value(firestoreSetting.memberShowCoopTotalCollection),
-          memberShowCoopTotalDue: Value(firestoreSetting.memberShowCoopTotalDue),
-          memberShowDueMembersList:
-              Value(firestoreSetting.memberShowDueMembersList),
-          memberShowCoopCurrentMonth:
-              Value(firestoreSetting.memberShowCoopCurrentMonth),
-          tenantCoopId: Value(coopId),
-          updatedAt: firestoreSetting.updatedAt,
-        ));
-      } else if (firestoreSetting.updatedAt.isAfter(localSettings.updatedAt)) {
-        await _db.update(_db.settings).replace(localSettings.copyWith(
-          defaultReceivedBy: firestoreSetting.defaultReceivedBy,
-          receiptPrefix: firestoreSetting.receiptPrefix,
-          nextReceiptSerial: firestoreSetting.nextReceiptSerial,
-          language: firestoreSetting.language,
-          themeMode: firestoreSetting.themeMode,
-          defaultMemberPassword: firestoreSetting.defaultMemberPassword,
-          memberShowCoopTotalCollection:
-              firestoreSetting.memberShowCoopTotalCollection,
-          memberShowCoopTotalDue: firestoreSetting.memberShowCoopTotalDue,
-          memberShowDueMembersList: firestoreSetting.memberShowDueMembersList,
-          memberShowCoopCurrentMonth:
-              firestoreSetting.memberShowCoopCurrentMonth,
-          tenantCoopId: Value(coopId),
-          updatedAt: firestoreSetting.updatedAt,
-        ));
+      if (shouldPullFromServer) {
+        await _applyFirestoreSettings(
+          localSettings,
+          firestoreSetting,
+          coopId,
+          preserveDevicePrefs: !_isAdmin,
+        );
       } else if (localSettings.updatedAt.isAfter(firestoreSetting.updatedAt) &&
           _isAdmin) {
         await settingsDoc.reference.update(localSettings.toJson());
@@ -426,12 +491,55 @@ class SyncService {
 
   void startPeriodicSync({Duration interval = const Duration(minutes: 5)}) {
     _syncTimer?.cancel();
-    _syncTimer = Timer.periodic(interval, (_) => syncAll());
+    _syncTimer = Timer.periodic(interval, (_) {
+      if (_canSync) syncAll();
+    });
   }
 
   void stopPeriodicSync() {
     _syncTimer?.cancel();
     _syncTimer = null;
+  }
+
+  /// Listen to Firestore changes and refresh local Drift cache.
+  void startRealtimeSync() {
+    stopRealtimeSync();
+    final coopId = _coopId;
+    if (coopId == null || !_firebase.isAuthenticated) return;
+
+    _realtimeSubscriptions.add(
+      _firebase.cooperativeDoc(coopId).snapshots().listen(
+        (_) => _scheduleSyncAll(),
+        onError: (e) => debugPrint('Org realtime sync error: $e'),
+      ),
+    );
+    _realtimeSubscriptions.add(
+      _firebase.settingsDoc(coopId).snapshots().listen(
+        (_) => _scheduleSyncAll(),
+        onError: (e) => debugPrint('Settings realtime sync error: $e'),
+      ),
+    );
+    _realtimeSubscriptions.add(
+      _firebase.membersCollection(coopId).snapshots().listen(
+        (_) => _scheduleSyncAll(),
+        onError: (e) => debugPrint('Members realtime sync error: $e'),
+      ),
+    );
+    _realtimeSubscriptions.add(
+      _firebase.depositsCollection(coopId).snapshots().listen(
+        (_) => _scheduleSyncAll(),
+        onError: (e) => debugPrint('Deposits realtime sync error: $e'),
+      ),
+    );
+  }
+
+  void stopRealtimeSync() {
+    for (final sub in _realtimeSubscriptions) {
+      sub.cancel();
+    }
+    _realtimeSubscriptions.clear();
+    _syncDebounce?.cancel();
+    _syncDebounce = null;
   }
 
   Future<void> forceSync() => syncAll();
@@ -489,7 +597,8 @@ class SyncService {
 
   void dispose() {
     _connectivitySubscription?.cancel();
-    _syncTimer?.cancel();
+    stopPeriodicSync();
+    stopRealtimeSync();
     _syncStatusController.close();
   }
 

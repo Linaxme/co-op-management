@@ -99,7 +99,6 @@ class CoopRepository {
     await (db.update(db.settings)..where((t) => t.id.equals(s.id))).write(
       SettingsCompanion(
         language: Value(language),
-        updatedAt: Value(DateTime.now()),
       ),
     );
   }
@@ -109,7 +108,6 @@ class CoopRepository {
     await (db.update(db.settings)..where((t) => t.id.equals(s.id))).write(
       SettingsCompanion(
         themeMode: Value(themeMode),
-        updatedAt: Value(DateTime.now()),
       ),
     );
   }
@@ -151,14 +149,16 @@ class CoopRepository {
 
   Future<Member?> getMemberByPhoneNormalized(String phoneNormalized) async {
     final q = db.select(db.members)
-      ..where((m) => m.phoneNormalized.equals(phoneNormalized));
+      ..where((m) =>
+          m.phoneNormalized.equals(phoneNormalized) & m.deletedAt.isNull());
     final list = await q.get();
     return list.isEmpty ? null : list.first;
   }
 
   Future<bool> isPhoneTaken(String phoneNormalized, {String? excludeUuid}) async {
     final q = db.select(db.members)
-      ..where((m) => m.phoneNormalized.equals(phoneNormalized));
+      ..where((m) =>
+          m.phoneNormalized.equals(phoneNormalized) & m.deletedAt.isNull());
     if (excludeUuid != null) {
       q.where((m) => m.uuid.equals(excludeUuid).not());
     }
@@ -876,5 +876,25 @@ class CoopRepository {
     unpaidMembers.sort((a, b) => (b['due'] as int).compareTo(a['due'] as int));
 
     return unpaidMembers;
+  }
+
+  Future<List<Member>> getAllMembers({bool includeTrashed = false}) async {
+    final members = await db.select(db.members).get();
+    if (includeTrashed) return members;
+    return members.where((m) => m.deletedAt == null).toList();
+  }
+
+  Future<List<Deposit>> getAllDeposits({
+    bool includeTrashed = false,
+    String? memberUuid,
+  }) async {
+    var deposits = await db.select(db.deposits).get();
+    if (memberUuid != null) {
+      deposits = deposits.where((d) => d.memberUuid == memberUuid).toList();
+    }
+    if (!includeTrashed) {
+      deposits = deposits.where((d) => d.deletedAt == null).toList();
+    }
+    return deposits;
   }
 }

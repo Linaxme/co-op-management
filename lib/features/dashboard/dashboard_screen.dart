@@ -11,12 +11,24 @@ import 'package:go_router/go_router.dart';
 import 'package:fl_chart/fl_chart.dart';
 import '../../l10n/app_localizations.dart';
 
-final _orgProvider =
-    StreamProvider((ref) => ref.watch(repoProvider).watchOrganization());
-final _lastDepositsProvider = StreamProvider(
-    (ref) => ref.watch(repoProvider).watchLastDeposits(limit: 5));
-final _membersProvider =
-    StreamProvider((ref) => ref.watch(repoProvider).watchActiveMembers());
+final _orgProvider = StreamProvider((ref) {
+  return coopScopedStream(
+    ref,
+    () => ref.watch(repoProvider).watchOrganization(),
+  );
+});
+final _lastDepositsProvider = StreamProvider((ref) {
+  return coopScopedStream(
+    ref,
+    () => ref.watch(repoProvider).watchLastDeposits(limit: 5),
+  );
+});
+final _membersProvider = StreamProvider((ref) {
+  return coopScopedStream(
+    ref,
+    () => ref.watch(repoProvider).watchActiveMembers(),
+  );
+});
 
 class DashboardScreen extends ConsumerStatefulWidget {
   const DashboardScreen({super.key});
@@ -29,6 +41,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
   int _chartYear = DateTime.now().year;
   int _statsYear = DateTime.now().year;
   int _statsMonth = DateTime.now().month;
+  int _refreshTick = 0;
 
   String get _statsMonthKey => monthKeyFromYearMonth(_statsYear, _statsMonth);
 
@@ -89,6 +102,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
     final now = DateTime.now();
     final selectedMonth = _statsMonthKey;
+    final dueStart = duePeriodStart();
 
     return Scaffold(
       appBar: AppBar(
@@ -117,6 +131,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: () async {
+          setState(() => _refreshTick++);
           ref.invalidate(_orgProvider);
           ref.invalidate(_lastDepositsProvider);
           ref.invalidate(_membersProvider);
@@ -129,7 +144,6 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 name: org.name,
                 address: org.address,
                 logoPath: org.logoPath,
-                shortName: org.shortName,
               ),
               loading: () => const _Skeleton(height: 92),
               error: (e, _) => _ErrorCard(
@@ -137,6 +151,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ),
             const SizedBox(height: 12),
             FutureBuilder<int>(
+              key: ValueKey('total-collection-$_refreshTick'),
               future: ref.read(repoProvider).totalCollectionAllTime(),
               builder: (context, snap) {
                 final total = snap.data ?? 0;
@@ -165,8 +180,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             ),
             const SizedBox(height: 12),
             FutureBuilder<Map<String, dynamic>>(
+              key: ValueKey('total-due-$_refreshTick'),
               future: ref.read(repoProvider).dueSummaryAllMembers(
-                    start: DateTime(2025, 1, 1),
+                    start: dueStart,
                     endInclusive: now,
                   ),
               builder: (context, snap) {
@@ -178,7 +194,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   onTap: () async {
                     final due =
                         await ref.read(repoProvider).dueSummaryAllMembers(
-                              start: DateTime(2025, 1, 1),
+                              start: dueStart,
                               endInclusive: now,
                             );
                     final members =
@@ -213,6 +229,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                       children: [
                         Expanded(
                           child: FutureBuilder<int>(
+                            key: ValueKey('month-collection-$selectedMonth-$_refreshTick'),
                             future: ref
                                 .read(repoProvider)
                                 .collectionForMonth(selectedMonth),
@@ -243,10 +260,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                         const SizedBox(width: 12),
                         Expanded(
                           child: FutureBuilder<Map<String, dynamic>>(
+                            key: ValueKey('month-due-$selectedMonth-$_refreshTick'),
                             future: ref.read(repoProvider).dueSummaryAllMembers(
-                                  start: DateTime(2025, 1, 1),
-                                  endInclusive:
-                                      DateTime(now.year, now.month, 1),
+                                  start: dueStart,
+                                  endInclusive: now,
                                 ),
                             builder: (context, snap) {
                               final members = (snap.data?['members'] as List?)
@@ -283,10 +300,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     ),
                     const SizedBox(height: 12),
                     membersAsync.when(
-                      data: (members) =>
-                          Text('Active Members: ${members.length}'),
-                      loading: () => const Text('Active Members: ...'),
-                      error: (e, _) => const Text('Active Members: -'),
+                      data: (members) => Text(
+                        'Active Members: ${members.length}',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      loading: () => Text(
+                        'Active Members: ...',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
+                      error: (e, _) => Text(
+                        'Active Members: -',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                     ),
                   ],
                 ),
@@ -295,12 +320,13 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             const SizedBox(height: 12),
             _CollectionByMonthChart(
               year: _chartYear,
+              refreshTick: _refreshTick,
               onYearChanged: (y) => setState(() => _chartYear = y),
             ),
             const SizedBox(height: 12),
             // Paid/Not Paid Pie Chart
             FutureBuilder<Map<String, dynamic>>(
-              key: ValueKey(selectedMonth),
+              key: ValueKey('pie-$selectedMonth-$_refreshTick'),
               future: Future.wait([
                 ref.read(repoProvider).watchActiveMembers().first,
                 ref.read(repoProvider).collectionForMonth(selectedMonth),
@@ -317,14 +343,14 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                     ),
                   );
                 }
-                final members = snap.data!['members'] as List;
+                final members = snap.data!['members'] as List<Member>;
                 final monthCollection = snap.data!['monthCollection'] as int;
 
                 // Calculate expected collection for selected month
                 final expectedCollection = members.fold<int>(
-                    0, (sum, m) => sum + (m.monthlyAmount as int));
-                final paidAmount = monthCollection;
-                final notPaidAmount = expectedCollection - paidAmount;
+                    0, (sum, m) => sum + m.monthlyAmount);
+                final paidAmount = monthCollection.clamp(0, expectedCollection);
+                final notPaidAmount = (expectedCollection - paidAmount).clamp(0, expectedCollection);
 
                 if (expectedCollection == 0) {
                   return const SizedBox.shrink();
@@ -455,10 +481,12 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
 class _CollectionByMonthChart extends ConsumerWidget {
   final int year;
+  final int refreshTick;
   final ValueChanged<int> onYearChanged;
 
   const _CollectionByMonthChart({
     required this.year,
+    required this.refreshTick,
     required this.onYearChanged,
   });
 
@@ -467,6 +495,7 @@ class _CollectionByMonthChart extends ConsumerWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return FutureBuilder<Map<String, int>>(
+      key: ValueKey('chart-$year-$refreshTick'),
       future: ref.read(repoProvider).collectionByMonthForYear(year),
       builder: (context, snap) {
         if (!snap.hasData) {
@@ -481,6 +510,10 @@ class _CollectionByMonthChart extends ConsumerWidget {
         final data = monthKeysForYear(year, snap.data!);
         final keys = data.keys.toList()..sort();
         final maxValue = data.values.fold<int>(0, (a, b) => a > b ? a : b);
+        final axisLabelStyle = Theme.of(context).textTheme.bodySmall?.copyWith(
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
+            );
+        final gridColor = Theme.of(context).colorScheme.outlineVariant;
 
         return Card(
           child: Padding(
@@ -575,7 +608,7 @@ class _CollectionByMonthChart extends ConsumerWidget {
                                         int.parse(parts[0]),
                                         int.parse(parts[1]),
                                       )),
-                                      style: const TextStyle(fontSize: 10),
+                                      style: axisLabelStyle,
                                     ),
                                   );
                                 }
@@ -591,7 +624,7 @@ class _CollectionByMonthChart extends ConsumerWidget {
                               getTitlesWidget: (value, meta) {
                                 return Text(
                                   formatCurrencyCompact(value.toInt()),
-                                  style: const TextStyle(fontSize: 10),
+                                  style: axisLabelStyle,
                                 );
                               },
                             ),
@@ -608,7 +641,7 @@ class _CollectionByMonthChart extends ConsumerWidget {
                           drawVerticalLine: false,
                           getDrawingHorizontalLine: (value) {
                             return FlLine(
-                              color: Colors.grey.shade200,
+                              color: gridColor,
                               strokeWidth: 1,
                             );
                           },
@@ -683,10 +716,11 @@ class _MetricCard extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(title,
-                          style: Theme.of(context)
-                              .textTheme
-                              .bodyMedium
-                              ?.copyWith(color: Colors.black54)),
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                color: Theme.of(context)
+                                    .colorScheme
+                                    .onSurfaceVariant,
+                              )),
                       const SizedBox(height: 4),
                       Text(value,
                           style: Theme.of(context).textTheme.titleMedium),
@@ -713,19 +747,19 @@ class _SmallStat extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     Widget content = Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFFE5E7EB)),
+        border: Border.all(color: cs.outlineVariant),
         borderRadius: BorderRadius.circular(14),
-        color: Colors.white,
+        color: cs.surfaceContainerHighest,
       ),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Text(title,
-            style: Theme.of(context)
-                .textTheme
-                .bodyMedium
-                ?.copyWith(color: Colors.black54)),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: cs.onSurfaceVariant,
+                )),
         const SizedBox(height: 6),
         Text(value, style: Theme.of(context).textTheme.titleMedium),
       ]),
@@ -748,16 +782,23 @@ class _TableHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final labelStyle = Theme.of(context).textTheme.labelLarge?.copyWith(
+          fontWeight: FontWeight.w600,
+          color: Theme.of(context).colorScheme.onSurfaceVariant,
+        );
     return Padding(
       padding: const EdgeInsets.all(12),
       child: Row(
         children: [
-          Expanded(flex: 3, child: Text(AppLocalizations.of(context)!.date)),
-          Expanded(flex: 5, child: Text(AppLocalizations.of(context)!.members)),
+          Expanded(
+              flex: 3, child: Text(AppLocalizations.of(context)!.date, style: labelStyle)),
+          Expanded(
+              flex: 5,
+              child: Text(AppLocalizations.of(context)!.members, style: labelStyle)),
           Expanded(
               flex: 3,
               child: Text(AppLocalizations.of(context)!.amount,
-                  textAlign: TextAlign.end)),
+                  textAlign: TextAlign.end, style: labelStyle)),
         ],
       ),
     );
@@ -771,7 +812,8 @@ class _DepositRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final df = DateFormat('yyyy-MM-dd');
-    return FutureBuilder(
+    final rowStyle = Theme.of(context).textTheme.bodyMedium;
+    return FutureBuilder<Member?>(
       future: ref.read(repoProvider).getMemberByUuid(deposit.memberUuid),
       builder: (context, snap) {
         final memberName = snap.data?.name ?? 'Unknown';
@@ -779,14 +821,15 @@ class _DepositRow extends ConsumerWidget {
           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           child: Row(
             children: [
-              Expanded(flex: 3, child: Text(df.format(deposit.date))),
+              Expanded(flex: 3, child: Text(df.format(deposit.date), style: rowStyle)),
               Expanded(
                   flex: 5,
-                  child: Text(memberName, overflow: TextOverflow.ellipsis)),
+                  child: Text(memberName,
+                      overflow: TextOverflow.ellipsis, style: rowStyle)),
               Expanded(
                   flex: 3,
                   child: Text(formatCurrencyCompact(deposit.amount),
-                      textAlign: TextAlign.end)),
+                      textAlign: TextAlign.end, style: rowStyle)),
             ],
           ),
         );
@@ -843,14 +886,16 @@ class _MonthMapSheet extends StatelessWidget {
                     return ListTile(
                       title: Text(
                         monthKeyToName(k),
-                        style: const TextStyle(fontSize: 14),
+                        style: Theme.of(context).textTheme.bodyMedium,
                       ),
                       trailing: Text(
                         amountText,
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
-                          color: isComplete ? Colors.green.shade700 : null,
+                          color: isComplete
+                              ? Colors.green.shade700
+                              : Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                     );
@@ -890,12 +935,16 @@ class _DueMembersSheet extends StatelessWidget {
                     final dueMonths = (m['dueMonths'] as Map<String, int>);
                     final months = dueMonths.keys.toList()..sort();
                     return ListTile(
-                      title: Text('${member.name} (${member.memberIdNumber})'),
+                      title: Text(
+                        '${member.name} (${member.memberIdNumber})',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                       subtitle: months.isEmpty
                           ? Text(AppLocalizations.of(context)!.noDue,
                               style: const TextStyle(color: Colors.green))
                           : Text(
-                              'Due months: ${months.length} (${months.take(3).map((k) => monthKeyToName(k)).join(', ')}${months.length > 3 ? '...' : ''})'),
+                              'Due months: ${months.length} (${months.take(3).map((k) => monthKeyToName(k)).join(', ')}${months.length > 3 ? '...' : ''})',
+                              style: Theme.of(context).textTheme.bodySmall),
                       trailing: Text(formatCurrencyCompact(totalDue),
                           style: TextStyle(
                             color: totalDue > 0
@@ -957,11 +1006,13 @@ class _PaidMembersSheet extends StatelessWidget {
                         final paid = m['paid'] as int;
                         final expected = m['expected'] as int;
                         return ListTile(
-                          title:
-                              Text('${member.name} (${member.memberIdNumber})'),
+                          title: Text(
+                            '${member.name} (${member.memberIdNumber})',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
                           subtitle: Text(
                             'Expected: ${NumberFormat.decimalPattern().format(expected)}',
-                            style: const TextStyle(fontSize: 12),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           trailing: Text(
                             formatCurrencyCompact(paid),
@@ -1029,13 +1080,15 @@ class _UnpaidMembersSheet extends StatelessWidget {
                         final expected = m['expected'] as int;
                         final due = m['due'] as int;
                         return ListTile(
-                          title:
-                              Text('${member.name} (${member.memberIdNumber})'),
+                          title: Text(
+                            '${member.name} (${member.memberIdNumber})',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
                           subtitle: Text(
                             paid > 0
                                 ? 'Paid: ${NumberFormat.decimalPattern().format(paid)} / Expected: ${NumberFormat.decimalPattern().format(expected)}'
                                 : 'Expected: ${NumberFormat.decimalPattern().format(expected)}',
-                            style: const TextStyle(fontSize: 12),
+                            style: Theme.of(context).textTheme.bodySmall,
                           ),
                           trailing: Text(
                             formatCurrencyCompact(due),
@@ -1064,7 +1117,8 @@ class _Skeleton extends StatelessWidget {
     return Container(
       height: height,
       decoration: BoxDecoration(
-          color: Colors.black12, borderRadius: BorderRadius.circular(16)),
+          color: Theme.of(context).colorScheme.surfaceContainerHighest,
+          borderRadius: BorderRadius.circular(16)),
     );
   }
 }
@@ -1120,14 +1174,15 @@ class _LegendItem extends StatelessWidget {
             children: [
               Text(
                 label,
-                style: const TextStyle(fontSize: 12, color: Colors.grey),
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
               ),
               Text(
                 value,
-                style: const TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                ),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
               ),
             ],
           ),

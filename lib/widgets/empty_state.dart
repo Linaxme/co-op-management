@@ -19,6 +19,7 @@ class EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(AppTheme.paddingXXL),
@@ -28,13 +29,13 @@ class EmptyState extends StatelessWidget {
             Icon(
               icon,
               size: 64,
-              color: Colors.grey.shade400,
+              color: cs.onSurfaceVariant.withValues(alpha: 0.7),
             ),
             const SizedBox(height: AppTheme.paddingL),
             Text(
               title,
               style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                    color: Colors.grey.shade600,
+                    color: cs.onSurface,
                     fontWeight: FontWeight.w600,
                   ),
               textAlign: TextAlign.center,
@@ -44,7 +45,7 @@ class EmptyState extends StatelessWidget {
               Text(
                 message!,
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Colors.grey.shade500,
+                      color: cs.onSurfaceVariant,
                     ),
                 textAlign: TextAlign.center,
               ),

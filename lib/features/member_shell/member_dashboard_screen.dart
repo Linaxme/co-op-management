@@ -45,15 +45,17 @@ class MemberDashboardScreen extends ConsumerWidget {
               ),
             ],
           ),
-          error: (_, __) => ListView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            children: [
-              SizedBox(
-                height: 200,
-                child: Center(child: Text(l10n.errorLoadingData)),
-              ),
-            ],
-          ),
+          error: (err, st) {
+            return ListView(
+              physics: const AlwaysScrollableScrollPhysics(),
+              children: [
+                SizedBox(
+                  height: 200,
+                  child: Center(child: Text(l10n.errorLoadingData)),
+                ),
+              ],
+            );
+          },
           data: (data) {
             final member = data.member;
             final showCoopCollection = data.settings.memberShowCoopTotalCollection;
@@ -68,7 +70,6 @@ class MemberDashboardScreen extends ConsumerWidget {
                     name: data.org!.name,
                     address: data.org!.address,
                     logoPath: data.org!.logoPath,
-                    shortName: data.org!.shortName,
                   )
                 else
                   Card(
@@ -97,28 +98,6 @@ class MemberDashboardScreen extends ConsumerWidget {
                     ),
                   ),
                 ],
-                const SizedBox(height: 12),
-                Row(
-                  children: [
-                    Expanded(
-                      child: _MetricCard(
-                        title: l10n.myTotalPaid,
-                        value: formatCurrencyCompact(data.totalPaid),
-                        icon: Icons.account_balance_wallet,
-                        color: Colors.green,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: _MetricCard(
-                        title: l10n.myDue,
-                        value: formatCurrencyCompact(data.totalDue),
-                        icon: Icons.warning_amber,
-                        color: data.totalDue > 0 ? Colors.red : Colors.green,
-                      ),
-                    ),
-                  ],
-                ),
                 if (showCoopCurrentMonth) ...[
                   const SizedBox(height: 12),
                   Card(
@@ -198,6 +177,28 @@ class MemberDashboardScreen extends ConsumerWidget {
                   ),
                 ],
                 const SizedBox(height: 12),
+                Row(
+                  children: [
+                    Expanded(
+                      child: _MetricCard(
+                        title: l10n.myTotalPaid,
+                        value: formatCurrencyCompact(data.totalPaid),
+                        icon: Icons.account_balance_wallet,
+                        color: Colors.green,
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: _MetricCard(
+                        title: l10n.myDue,
+                        value: formatCurrencyCompact(data.totalDue),
+                        icon: Icons.warning_amber,
+                        color: data.totalDue > 0 ? Colors.red : Colors.green,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
                 Text(
                   l10n.recentCooperativeDeposits,
                   style: Theme.of(context).textTheme.titleMedium,
@@ -210,12 +211,14 @@ class MemberDashboardScreen extends ConsumerWidget {
                       child: Center(child: CircularProgressIndicator()),
                     ),
                   ),
-                  error: (_, __) => Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(14),
-                      child: Text(l10n.errorLoadingData),
-                    ),
-                  ),
+                  error: (err, st) {
+                    return Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(14),
+                        child: Text(l10n.errorLoadingData),
+                      ),
+                    );
+                  },
                   data: (recentDeposits) {
                     if (recentDeposits.isEmpty) {
                       return Card(
@@ -293,7 +296,10 @@ class _MemberDashboardData {
 }
 
 final _cooperativeRecentDepositsProvider = StreamProvider<List<Deposit>>((ref) {
-  return ref.watch(repoProvider).watchLastDeposits(limit: 5);
+  return coopScopedStream(
+    ref,
+    () => ref.watch(repoProvider).watchLastDeposits(limit: 5),
+  );
 });
 
 final _memberDashboardProvider =
@@ -301,34 +307,34 @@ final _memberDashboardProvider =
   final repo = ref.read(repoProvider);
   final now = DateTime.now();
   final curMonthKey = monthKey(now);
+  final dueStart = duePeriodStart();
+
   final member = await repo.getMemberByUuid(memberUuid);
   final org = await repo.watchOrganization().first;
   final settings = await repo.getSettings();
   final deposits = await repo.watchMemberDeposits(memberUuid).first;
   final due = await repo.dueForOneMember(
     memberUuid: memberUuid,
-    start: DateTime(2025, 1, 1),
+    start: dueStart,
     endInclusive: now,
   );
+
+  var totalPaid = 0;
+  for (final d in deposits.where((d) => d.deletedAt == null)) {
+    totalPaid += d.amount;
+  }
 
   final coopTotalCollection = await repo.totalCollectionAllTime();
   final coopCurrentMonthCollection =
       await repo.collectionForMonth(curMonthKey);
   final dueSummary = await repo.dueSummaryAllMembers(
-    start: DateTime(2025, 1, 1),
+    start: dueStart,
     endInclusive: now,
   );
   final currentMonthDueSummary = await repo.dueSummaryAllMembers(
     start: DateTime(now.year, now.month, 1),
-    endInclusive: DateTime(now.year, now.month, 1),
+    endInclusive: now,
   );
-
-  final ownDeposits =
-      deposits.where((d) => d.memberUuid == memberUuid).toList();
-  var totalPaid = 0;
-  for (final d in ownDeposits) {
-    totalPaid += d.amount;
-  }
 
   return _MemberDashboardData(
     member: member,
@@ -359,6 +365,7 @@ class _MetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(14),
@@ -369,10 +376,9 @@ class _MetricCard extends StatelessWidget {
             const SizedBox(height: 8),
             Text(
               title,
-              style: Theme.of(context)
-                  .textTheme
-                  .bodySmall
-                  ?.copyWith(color: Colors.black54),
+              style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                    color: cs.onSurfaceVariant,
+                  ),
             ),
             const SizedBox(height: 4),
             Text(value, style: Theme.of(context).textTheme.titleMedium),
@@ -390,7 +396,7 @@ class _CooperativeDepositRow extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final df = DateFormat('yyyy-MM-dd');
-    return FutureBuilder(
+    return FutureBuilder<Member?>(
       future: ref.read(repoProvider).getMemberByUuid(deposit.memberUuid),
       builder: (context, snap) {
         final memberName = snap.data?.name ?? 'Unknown';

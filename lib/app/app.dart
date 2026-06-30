@@ -23,6 +23,17 @@ class CoopApp extends ConsumerWidget {
       theme: AppTheme.light(bengali: bengali),
       darkTheme: AppTheme.dark(bengali: bengali),
       themeMode: themeMode,
+      builder: (context, child) {
+        final theme = Theme.of(context);
+        final defaultStyle = theme.textTheme.bodyMedium?.copyWith(
+              color: theme.colorScheme.onSurface,
+            ) ??
+            TextStyle(color: theme.colorScheme.onSurface);
+        return DefaultTextStyle(
+          style: defaultStyle,
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
       routerConfig: router,
       locale: locale,
       supportedLocales: const [

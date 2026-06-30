@@ -11,10 +11,10 @@ import 'package:share_plus/share_plus.dart';
 import '../../core/db/app_db.dart';
 import '../../core/utils/date_utils.dart';
 import '../../core/utils/image_sync_codec.dart';
-import 'coop_repository.dart';
+import 'coop_data_repository.dart';
 
 class ReportService {
-  final CoopRepository repo;
+  final CoopDataRepository repo;
   ReportService({required this.repo});
 
   PdfPageFormat _a4() => PdfPageFormat.a4;
@@ -103,7 +103,7 @@ class ReportService {
         (dueSummary['members'] as List).cast<Map<String, dynamic>>();
 
     // Calculate deposits per member for the year
-    final deposits = await repo.db.select(repo.db.deposits).get();
+    final deposits = await repo.getAllDeposits();
     final allDeposits = deposits.where((d) => d.deletedAt == null).toList();
     final yearPrefix = '$year-';
 
@@ -446,7 +446,7 @@ class ReportService {
     final dueMonths = (due['dueMonths'] as Map<String, int>);
     final dueKeys = dueMonths.keys.toList()..sort();
 
-    final deposits = await repo.db.select(repo.db.deposits).get();
+    final deposits = await repo.getAllDeposits();
     final memberDeposits = deposits
         .where((d) => d.deletedAt == null && d.memberUuid == memberUuid)
         .toList()
@@ -739,13 +739,13 @@ class ReportService {
     }
 
     // Get all active members
-    final allMembersData = await repo.db.select(repo.db.members).get();
+    final allMembersData = await repo.getAllMembers(includeTrashed: true);
     final membersList = allMembersData
         .where((m) => m.deletedAt == null && m.isActive == true)
         .toList();
 
     // Get all deposits and filter for this month (handles multi-month deposits)
-    final deposits = await repo.db.select(repo.db.deposits).get();
+    final deposits = await repo.getAllDeposits();
     final allDeposits = deposits.where((d) => d.deletedAt == null).toList();
 
     // Create maps: memberUuid -> total paid amount and deposit info
@@ -1104,7 +1104,7 @@ class ReportService {
         (dueSummary['members'] as List).cast<Map<String, dynamic>>();
 
     // Calculate deposits per member for the year
-    final deposits = await repo.db.select(repo.db.deposits).get();
+    final deposits = await repo.getAllDeposits();
     final allDeposits = deposits.where((d) => d.deletedAt == null).toList();
     final yearPrefix = '$year-';
 
@@ -1185,12 +1185,12 @@ class ReportService {
   }
 
   Future<File> exportMonthlyReportCsv({required String monthKey}) async {
-    final allMembers = await repo.db.select(repo.db.members).get();
+    final allMembers = await repo.getAllMembers(includeTrashed: true);
     final membersList = allMembers
         .where((m) => m.deletedAt == null && m.isActive == true)
         .toList();
 
-    final deposits = await repo.db.select(repo.db.deposits).get();
+    final deposits = await repo.getAllDeposits();
     final allDeposits = deposits.where((d) => d.deletedAt == null).toList();
 
     // Handle multi-month deposits by distributing amount across months
@@ -1295,7 +1295,7 @@ class ReportService {
         (dueSummary['members'] as List).cast<Map<String, dynamic>>();
 
     // Calculate deposits per member for the year
-    final deposits = await repo.db.select(repo.db.deposits).get();
+    final deposits = await repo.getAllDeposits();
     final allDeposits = deposits.where((d) => d.deletedAt == null).toList();
     final yearPrefix = '$year-';
 
@@ -1430,12 +1430,12 @@ class ReportService {
   }
 
   Future<File> exportMonthlyReportExcel({required String monthKey}) async {
-    final allMembers = await repo.db.select(repo.db.members).get();
+    final allMembers = await repo.getAllMembers(includeTrashed: true);
     final membersList = allMembers
         .where((m) => m.deletedAt == null && m.isActive == true)
         .toList();
 
-    final deposits = await repo.db.select(repo.db.deposits).get();
+    final deposits = await repo.getAllDeposits();
     final allDeposits = deposits.where((d) => d.deletedAt == null).toList();
 
     // Handle multi-month deposits by distributing amount across months

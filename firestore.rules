@@ -71,16 +71,14 @@ service cloud.firestore {
       allow delete: if false;
 
       match /members/{docId} {
-        allow read: if belongsToCoop(coopId) && (
-          isAdmin() || (isMember() && resource.data.uuid == memberUuid())
-        );
+        // Members can read all coop members (for dashboard stats); only admin writes.
+        allow read: if belongsToCoop(coopId) && isSignedIn();
         allow create, update, delete: if belongsToCoop(coopId) && isAdmin();
       }
 
       match /deposits/{docId} {
-        allow read: if belongsToCoop(coopId) && (
-          isAdmin() || (isMember() && resource.data.memberUuid == memberUuid())
-        );
+        // Members can read all coop deposits (for totals/recent list); only admin writes.
+        allow read: if belongsToCoop(coopId) && isSignedIn();
         allow create, update, delete: if belongsToCoop(coopId) && isAdmin();
       }
 

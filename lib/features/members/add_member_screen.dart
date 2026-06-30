@@ -176,39 +176,63 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen>
                         width: 120,
                         height: 120,
                         decoration: BoxDecoration(
-                          border:
-                              Border.all(color: Colors.grey.shade300, width: 2),
+                          border: Border.all(
+                            color: Theme.of(context).colorScheme.outlineVariant,
+                            width: 2,
+                          ),
                           borderRadius: BorderRadius.circular(8),
-                          color: Colors.grey.shade50,
+                          color: Theme.of(context)
+                              .colorScheme
+                              .surfaceContainerHighest,
                         ),
                         child: _photoPath != null
                             ? CachedImageFile(
                                 filePath: _photoPath!,
                                 fit: BoxFit.cover,
                                 borderRadius: BorderRadius.circular(8),
-                                errorWidget: const Icon(Icons.person,
-                                    size: 60, color: Colors.grey),
+                                errorWidget: Icon(
+                                  Icons.person,
+                                  size: 60,
+                                  color: Theme.of(context)
+                                      .colorScheme
+                                      .onSurfaceVariant,
+                                ),
                                 placeholder: Column(
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
-                                    const Icon(Icons.add_photo_alternate,
-                                        size: 40, color: Colors.grey),
+                                    Icon(
+                                      Icons.add_photo_alternate,
+                                      size: 40,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .onSurfaceVariant,
+                                    ),
                                     const SizedBox(height: 8),
-                                    Text(AppLocalizations.of(context)!.addPhoto,
-                                        style: const TextStyle(
-                                            fontSize: 12, color: Colors.grey)),
+                                    Text(
+                                      AppLocalizations.of(context)!.addPhoto,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall,
+                                    ),
                                   ],
                                 ),
                               )
                             : Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  const Icon(Icons.add_photo_alternate,
-                                      size: 40, color: Colors.grey),
+                                  Icon(
+                                    Icons.add_photo_alternate,
+                                    size: 40,
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurfaceVariant,
+                                  ),
                                   const SizedBox(height: 8),
-                                  Text(AppLocalizations.of(context)!.addPhoto,
-                                      style: const TextStyle(
-                                          fontSize: 12, color: Colors.grey)),
+                                  Text(
+                                    AppLocalizations.of(context)!.addPhoto,
+                                    style:
+                                        Theme.of(context).textTheme.bodySmall,
+                                  ),
                                 ],
                               ),
                       ),
@@ -341,10 +365,19 @@ class _AddMemberScreenState extends ConsumerState<AddMemberScreen>
                                         .languageCode));
                           }
                           final repo = ref.read(repoProvider);
-                          final phoneTaken = await repo.isPhoneTaken(
-                            normalized,
-                            excludeUuid: widget.memberUuid,
-                          );
+                          var phoneTaken = false;
+                          if (widget.memberUuid != null) {
+                            final current =
+                                await repo.getMemberByUuid(widget.memberUuid!);
+                            if (current?.phoneNormalized != normalized) {
+                              phoneTaken = await repo.isPhoneTaken(
+                                normalized,
+                                excludeUuid: widget.memberUuid,
+                              );
+                            }
+                          } else {
+                            phoneTaken = await repo.isPhoneTaken(normalized);
+                          }
                           if (phoneTaken) {
                             throw AuthException(
                                 AppLocalizations.of(context)!.phoneAlreadyUsed);

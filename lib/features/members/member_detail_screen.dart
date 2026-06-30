@@ -16,8 +16,12 @@ import '../../l10n/app_localizations.dart';
 
 final memberProvider = FutureProvider.family(
     (ref, String uuid) => ref.watch(repoProvider).getMemberByUuid(uuid));
-final memberDepositsProvider = StreamProvider.family(
-    (ref, String uuid) => ref.watch(repoProvider).watchMemberDeposits(uuid));
+final memberDepositsProvider = StreamProvider.family((ref, String uuid) {
+  return coopScopedStream(
+    ref,
+    () => ref.watch(repoProvider).watchMemberDeposits(uuid),
+  );
+});
 
 class MemberDetailScreen extends ConsumerStatefulWidget {
   final String memberUuid;
@@ -174,10 +178,14 @@ class _MemberDetailScreenState extends ConsumerState<MemberDetailScreen> {
                                     height: 120,
                                     decoration: BoxDecoration(
                                       border: Border.all(
-                                          color: Colors.grey.shade300,
+                                          color: Theme.of(context)
+                                              .colorScheme
+                                              .outlineVariant,
                                           width: 2),
                                       borderRadius: BorderRadius.circular(8),
-                                      color: Colors.grey.shade50,
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .surfaceContainerHighest,
                                     ),
                                     child: _updatingPhoto
                                         ? const Center(
@@ -195,13 +203,18 @@ class _MemberDetailScreenState extends ConsumerState<MemberDetailScreen> {
                                                     child:
                                                         CircularProgressIndicator(
                                                             strokeWidth: 2)),
-                                                errorWidget: const Icon(
+                                                errorWidget: Icon(
                                                     Icons.person,
                                                     size: 60,
-                                                    color: Colors.grey),
+                                                    color: Theme.of(context)
+                                                        .colorScheme
+                                                        .onSurfaceVariant),
                                               )
-                                            : const Icon(Icons.person,
-                                                size: 60, color: Colors.grey),
+                                            : Icon(Icons.person,
+                                                size: 60,
+                                                color: Theme.of(context)
+                                                    .colorScheme
+                                                    .onSurfaceVariant),
                                   ),
                                   if (widget.readOnly)
                                     CircleAvatar(
@@ -748,7 +761,9 @@ class _MemberDetailScreenState extends ConsumerState<MemberDetailScreen> {
                           return Padding(
                             padding: const EdgeInsets.only(left: 8, top: 4),
                             child: Text(
-                                '→ $monthName (${formatCurrencyCompact(dueMonths[k]!)})'),
+                              '→ $monthName (${formatCurrencyCompact(dueMonths[k]!)})',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
                           );
                         }),
                     ],
@@ -791,7 +806,7 @@ class _BalanceItem extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 12,
-              color: Colors.grey.shade600,
+              color: Theme.of(context).colorScheme.onSurfaceVariant,
             ),
           ),
           const SizedBox(height: 4),
