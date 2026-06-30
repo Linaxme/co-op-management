@@ -1,0 +1,51 @@
+{
+  "version": "1.0",
+  "exportDate": "2024-01-15T10:00:00.000Z",
+  "organization": {
+    "name": "SSF Cooperative Test",
+    "address": "Test Address",
+    "logoPath": null,
+    "signaturePath": null,
+    "updatedAt": "2024-01-15T10:00:00.000Z"
+  },
+  "settings": {
+    "defaultReceivedBy": "Admin",
+    "receiptPrefix": "RCPT",
+    "nextReceiptSerial": 1,
+    "updatedAt": "2024-01-15T10:00:00.000Z"
+  },
+  "members": [
+    {
+      "uuid": "test-member-1",
+      "memberIdNumber": "001",
+      "name": "Test Member",
+      "phone": "+8801234567890",
+      "address": "Test Address",
+      "nidNumber": "1234567890123",
+      "photoPath": null,
+      "monthlyAmount": 500,
+      "isActive": true,
+      "deletedAt": null,
+      "createdAt": "2024-01-15T10:00:00.000Z",
+      "updatedAt": "2024-01-15T10:00:00.000Z"
+    }
+  ],
+  "deposits": [
+    {
+      "uuid": "test-deposit-1",
+      "memberUuid": "test-member-1",
+      "date": "2024-01-15T10:00:00.000Z",
+      "monthKey": "2024-01",
+      "amount": 500,
+      "reason": "Monthly deposit",
+      "method": "cash",
+      "receivedBy": "Admin",
+      "receiptSerial": 1,
+      "receiptPdfPath": null,
+      "deletedAt": null,
+      "createdAt": "2024-01-15T10:00:00.000Z",
+      "updatedAt": "2024-01-15T10:00:00.000Z"
+    }
+  ]
+}
+

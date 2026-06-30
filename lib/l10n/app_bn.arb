@@ -1,0 +1,414 @@
+{
+  "@@locale": "bn",
+  "appTitle": "কোঅপারেটিভ ম্যানেজমেন্ট",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  "dashboard": "ড্যাশবোর্ড",
+  "members": "সদস্য",
+  "due": "বকেয়া",
+  "reports": "রিপোর্ট",
+  "settings": "সেটিংস",
+  "trash": "ট্র্যাশ",
+  "addDeposit": "ডিপোজিট যোগ করুন",
+  "addMember": "সদস্য যোগ করুন",
+  "editMember": "সদস্য সম্পাদনা করুন",
+  "memberDetails": "সদস্যের বিবরণ",
+  "dueReport": "বকেয়া রিপোর্ট",
+  "save": "সংরক্ষণ",
+  "cancel": "বাতিল",
+  "delete": "মুছুন",
+  "edit": "সম্পাদনা",
+  "confirm": "নিশ্চিত করুন",
+  "required": "আবশ্যক",
+  "search": "খুঁজুন",
+  "searchBy": "নাম / সদস্য আইডি / ফোন দিয়ে খুঁজুন",
+  "totalCollection": "মোট সংগ্রহ",
+  "totalDue": "মোট বকেয়া",
+  "collection": "সংগ্রহ",
+  "currentMonth": "বর্তমান মাস ({month})",
+  "@currentMonth": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "monthPaymentStatus": "পেমেন্ট স্ট্যাটাস ({month})",
+  "@monthPaymentStatus": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "collectionByMonth": "মাস অনুযায়ী সংগ্রহ",
+  "noMembersYet": "এখনো কোনো সদস্য নেই",
+  "noMembersFound": "কোনো সদস্য পাওয়া যায়নি",
+  "tapToAddFirstMember": "+ চাপুন আপনার প্রথম সদস্য যোগ করতে",
+  "addFirstMember": "প্রথম সদস্য যোগ করুন",
+  "tryDifferentSearch": "একটি ভিন্ন শব্দ দিয়ে চেষ্টা করুন",
+  "noDueMembers": "কোনো বকেয়া সদস্য নেই",
+  "allMembersUpToDate": "সব সদস্য তাদের পেমেন্ট আপ টু ডেট! 🎉",
+  "noDue": "কোনো বকেয়া নেই",
+  "months": "মাস",
+  "memberIdNumber": "সদস্য আইডি নম্বর",
+  "name": "নাম",
+  "phone": "ফোন",
+  "phoneOptional": "ফোন (ঐচ্ছিক)",
+  "address": "ঠিকানা",
+  "addressOptional": "ঠিকানা (ঐচ্ছিক)",
+  "nidNumber": "এনআইডি নম্বর",
+  "nidNumberOptional": "এনআইডি নম্বর (ঐচ্ছিক)",
+  "monthlyAmount": "মাসিক পরিমাণ (টাকা)",
+  "addPhoto": "ছবি যোগ করুন",
+  "removePhoto": "ছবি সরান",
+  "memberTypeNameOrId": "সদস্য (নাম বা আইডি টাইপ করুন)",
+  "memberCannotBeChanged": "সদস্য (পরিবর্তন করা যাবে না)",
+  "date": "তারিখ",
+  "amount": "পরিমাণ (টাকা)",
+  "fromMonth": "শুরু মাস",
+  "toMonth": "শেষ মাস",
+  "toMonthOptional": "শেষ মাস (ঐচ্ছিক)",
+  "selectMonth": "মাস নির্বাচন করুন",
+  "selectMonthOptional": "মাস নির্বাচন করুন (ঐচ্ছিক)",
+  "noneSingleMonth": "কিছু নেই (এক মাস)",
+  "paymentMethod": "পেমেন্ট পদ্ধতি",
+  "cash": "নগদ",
+  "bkash": "বিকাশ",
+  "nagad": "নগদ",
+  "bank": "ব্যাংক",
+  "receivedBy": "গ্রহণ করেছেন",
+  "confirmDeposit": "ডিপোজিট নিশ্চিত করুন",
+  "depositAmount": "ডিপোজিট পরিমাণ: {amount}",
+  "@depositAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "member": "সদস্য: {name}",
+  "@member": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmGenerateReceipt": "আপনি কি নিশ্চিত করতে এবং রসিদ তৈরি করতে চান?",
+  "confirmGenerateReceiptButton": "নিশ্চিত করুন এবং রসিদ তৈরি করুন",
+  "depositConfirmed": "ডিপোজিট নিশ্চিত হয়েছে। রসিদ তৈরি হয়েছে।",
+  "depositUpdated": "ডিপোজিট সফলভাবে আপডেট হয়েছে",
+  "error": "ত্রুটি",
+  "errorLoadingMember": "সদস্য লোড করতে ত্রুটি",
+  "errorLoadingMembers": "সদস্য লোড করতে ত্রুটি",
+  "invalidImagePath": "অবৈধ ছবির পথ",
+  "selectedImageNotFound": "নির্বাচিত ছবির ফাইল পাওয়া যায়নি",
+  "errorCheckingFile": "ফাইল চেক করতে ত্রুটি: {error}",
+  "@errorCheckingFile": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorAccessingDirectory": "ডিরেক্টরি অ্যাক্সেস করতে ত্রুটি: {error}",
+  "@errorAccessingDirectory": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorCreatingFolder": "ফোল্ডার তৈরি করতে ত্রুটি: {error}",
+  "@errorCreatingFolder": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorSavingImage": "ছবি সংরক্ষণ করতে ত্রুটি: {error}",
+  "@errorSavingImage": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "unexpectedError": "অপ্রত্যাশিত ত্রুটি: {error}",
+  "@unexpectedError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "memberSaved": "সদস্য সফলভাবে সংরক্ষণ হয়েছে",
+  "memberUpdated": "সদস্য সফলভাবে আপডেট হয়েছে",
+  "deleteMember": "সদস্য মুছুন",
+  "deleteMemberConfirm": "আপনি কি নিশ্চিত যে আপনি \"{name}\" মুছতে চান? এটি সদস্যকে ট্র্যাশে সরিয়ে দেবে।",
+  "@deleteMemberConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "memberDeleted": "সদস্য সফলভাবে মুছে ফেলা হয়েছে",
+  "memberRestored": "সদস্য সফলভাবে পুনরুদ্ধার হয়েছে",
+  "memberPermanentlyDeleted": "সদস্য স্থায়ীভাবে মুছে ফেলা হয়েছে",
+  "depositDeleted": "ডিপোজিট সফলভাবে মুছে ফেলা হয়েছে",
+  "depositRestored": "ডিপোজিট সফলভাবে পুনরুদ্ধার হয়েছে",
+  "depositPermanentlyDeleted": "ডিপোজিট স্থায়ীভাবে মুছে ফেলা হয়েছে",
+  "failedToLoadOrganization": "সংস্থা লোড করতে ব্যর্থ",
+  "generalSettings": "সাধারণ সেটিংস",
+  "organizationNameAndAddress": "সংস্থার নাম এবং ঠিকানা",
+  "organizationName": "সংস্থার নাম",
+  "enterOrganizationName": "সংস্থার নাম লিখুন",
+  "organizationAddress": "সংস্থার ঠিকানা",
+  "enterOrganizationAddress": "সংস্থার ঠিকানা লিখুন",
+  "brandingIdentity": "ব্র্যান্ডিং এবং পরিচয়",
+  "logoAndSignature": "নথির জন্য লোগো এবং স্বাক্ষর",
+  "logo": "লোগো",
+  "usedInReceiptsAndReports": "রসিদ এবং রিপোর্টে ব্যবহৃত",
+  "signature": "স্বাক্ষর",
+  "receiptConfiguration": "রসিদ কনফিগারেশন",
+  "receiptSettings": "রসিদ প্রিফিক্স এবং সিরিয়াল নম্বর সেটিংস",
+  "receiptPrefix": "রসিদ প্রিফিক্স",
+  "defaultReceivedBy": "ডিফল্ট গ্রহণকারী",
+  "appearance": "চেহারা",
+  "themeAndLanguage": "থিম মোড এবং ভাষা সেটিংস",
+  "themeMode": "থিম মোড",
+  "light": "হালকা",
+  "dark": "অন্ধকার",
+  "auto": "স্বয়ংক্রিয়",
+  "language": "ভাষা",
+  "bengali": "বাংলা",
+  "english": "ইংরেজি",
+  "dataManagement": "ডেটা ম্যানেজমেন্ট",
+  "backupAndRestore": "আপনার ডেটা ব্যাকআপ এবং পুনরুদ্ধার করুন",
+  "exportBackup": "ব্যাকআপ রপ্তানি করুন",
+  "importBackup": "ব্যাকআপ আমদানি করুন",
+  "saveAllSettings": "সব সেটিংস সংরক্ষণ করুন",
+  "settingsSaved": "সেটিংস সফলভাবে সংরক্ষণ হয়েছে",
+  "backupExported": "ব্যাকআপ সফলভাবে রপ্তানি হয়েছে",
+  "backupImported": "ব্যাকআপ সফলভাবে আমদানি হয়েছে",
+  "errorPickingImage": "ছবি নির্বাচন করতে ত্রুটি: {error}",
+  "@errorPickingImage": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "annualReport": "বার্ষিক রিপোর্ট",
+  "yearWiseSummary": "বছর অনুযায়ী সংগ্রহ সারাংশ",
+  "memberReport": "সদস্য রিপোর্ট",
+  "individualMemberDetails": "ব্যক্তিগত সদস্যের বিবরণ এবং রিপোর্ট",
+  "monthlyReport": "মাসিক রিপোর্ট",
+  "monthWiseCollection": "মাস অনুযায়ী সংগ্রহ এবং সদস্যের অবস্থা",
+  "generatePdf": "PDF তৈরি করুন",
+  "exportCsv": "CSV রপ্তানি করুন",
+  "exportExcel": "Excel রপ্তানি করুন",
+  "selectYear": "বছর নির্বাচন করুন",
+  "selectMember": "সদস্য নির্বাচন করুন",
+  "selectMonth": "মাস নির্বাচন করুন",
+  "reportGenerated": "রিপোর্ট সফলভাবে তৈরি হয়েছে",
+  "reportExported": "রিপোর্ট সফলভাবে রপ্তানি হয়েছে",
+  "deletedMembers": "মুছে ফেলা সদস্য",
+  "deletedDeposits": "মুছে ফেলা ডিপোজিট",
+  "restore": "পুনরুদ্ধার",
+  "permanentDelete": "স্থায়ীভাবে মুছুন",
+  "emptyTrash": "ট্র্যাশ খালি করুন",
+  "emptyTrashConfirm": "আপনি কি নিশ্চিত যে আপনি ট্র্যাশের সব আইটেম স্থায়ীভাবে মুছতে চান? এই কাজটি পূর্বাবস্থায় ফেরানো যাবে না।",
+  "trashEmptied": "ট্র্যাশ সফলভাবে খালি করা হয়েছে",
+  "noDeletedMembers": "কোনো মুছে ফেলা সদস্য নেই",
+  "noDeletedDeposits": "কোনো মুছে ফেলা ডিপোজিট নেই",
+  "memberId": "সদস্য আইডি",
+  "phoneLabel": "ফোন: {phone}",
+  "@phoneLabel": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "addressLabel": "ঠিকানা: {address}",
+  "@addressLabel": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "nidLabel": "এনআইডি: {nid}",
+  "@nidLabel": {
+    "placeholders": {
+      "nid": {
+        "type": "String"
+      }
+    }
+  },
+  "monthlyAmountLabel": "মাসিক পরিমাণ: {amount}",
+  "@monthlyAmountLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "balanceSummary": "ব্যালেন্স সারাংশ",
+  "totalDeposited": "মোট জমা",
+  "expectedTotal": "প্রত্যাশিত মোট",
+  "netDueAdvance": "নেট বকেয়া/অগ্রিম",
+  "deposits": "ডিপোজিট",
+  "filterByDate": "তারিখ দিয়ে ফিল্টার করুন",
+  "all": "সব",
+  "thisMonth": "এই মাস",
+  "lastMonth": "গত মাস",
+  "customRange": "কাস্টম রেঞ্জ",
+  "selectStartDate": "শুরু তারিখ নির্বাচন করুন",
+  "selectEndDate": "শেষ তারিখ নির্বাচন করুন",
+  "depositHistory": "ডিপোজিট ইতিহাস",
+  "noDeposits": "কোনো ডিপোজিট নেই",
+  "receiptNumber": "রসিদ নম্বর",
+  "method": "পদ্ধতি",
+  "reason": "কারণ",
+  "duplicateDepositError": "এই মাসের জন্য ইতিমধ্যে ডিপোজিট করা হয়েছে: {month}। একই মাসের জন্য একাধিক ডিপোজিট করা যাবে না।",
+  "@duplicateDepositError": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "duplicateDepositsError": "এই মাসগুলোর জন্য ইতিমধ্যে ডিপোজিট করা হয়েছে: {months}। একই মাসের জন্য একাধিক ডিপোজিট করা যাবে না।",
+  "@duplicateDepositsError": {
+    "placeholders": {
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "adminLogin": "অ্যাডমিন",
+  "memberLogin": "সদস্য",
+  "loginWelcome": "স্বাগতম",
+  "loginSubtitleMember": "সমিতির শর্ট নেম দিয়ে লগইন করুন",
+  "loginSubtitleAdmin": "সমিতি পরিচালনার জন্য লগইন করুন",
+  "loginSwitchToAdmin": "অ্যাডমিন লগইন",
+  "loginSwitchToMember": "সদস্য লগইন",
+  "email": "ইমেইল",
+  "password": "পাসওয়ার্ড",
+  "pin": "পিন",
+  "login": "লগইন",
+  "logout": "লগআউট",
+  "loginFailed": "লগইন ব্যর্থ। তথ্য যাচাই করুন।",
+  "passwordLengthHint": "পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে",
+  "defaultMemberPassword": "ডিফল্ট মেম্বার পাসওয়ার্ড",
+  "defaultMemberPasswordHint": "নতুন মেম্বার যোগ করলে এই পাসওয়ার্ড ব্যবহার হবে",
+  "changePassword": "পাসওয়ার্ড পরিবর্তন",
+  "currentPassword": "বর্তমান পাসওয়ার্ড",
+  "newPassword": "নতুন পাসওয়ার্ড",
+  "confirmPassword": "পাসওয়ার্ড নিশ্চিত করুন",
+  "passwordMismatch": "পাসওয়ার্ড মিলছে না",
+  "passwordChanged": "পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে",
+  "myProfile": "আমার প্রোফাইল",
+  "myDue": "আমার বকেয়া",
+  "initialPin": "প্রাথমিক পিন",
+  "resetPin": "পিন রিসেট (ঐচ্ছিক)",
+  "resetPinHint": "খালি রাখলে পুরনো পিন থাকবে",
+  "phoneAlreadyUsed": "এই ফোন নম্বর ইতিমধ্যে নিবন্ধিত",
+  "noDueAmount": "কোনো বকেয়া নেই। আপনি আপডেট আছেন।",
+  "errorLoadingData": "ডেটা লোড করতে ব্যর্থ",
+  "theme": "থিম",
+  "themeSystem": "সিস্টেম",
+  "themeLight": "হালকা",
+  "themeDark": "গাঢ়",
+  "signUp": "সাইন আপ",
+  "signUpTitle": "সমবায় নিবন্ধন",
+  "alreadyHaveAccount": "অ্যাকাউন্ট আছে? লগইন করুন",
+  "dontHaveAccount": "নতুন সমবায়? সাইন আপ করুন",
+  "cooperativeAlreadyRegistered": "ইতিমধ্যে একটি সমবায় নিবন্ধিত। লগইন করুন।",
+  "signUpFailed": "সাইন আপ ব্যর্থ। আবার চেষ্টা করুন।",
+  "memberLoginHint": "ফোন নম্বরই ইউজারনেম। পাসওয়ার্ড অ্যাডমিনের দেওয়া ডিফল্ট পাসওয়ার্ড।",
+  "signUpSuccess": "সমবায় সফলভাবে নিবন্ধিত হয়েছে",
+  "organizationShortName": "সংস্থার শর্ট নেম",
+  "organizationShortNameHint": "যেমন: SSF, BRAC",
+  "organizationShortNameHelper": "সদস্যরা লগইনে এটি টাইপ করবে (২–১২ অক্ষর)",
+  "shortNameTaken": "এই শর্ট নেম ইতিমধ্যে ব্যবহৃত",
+  "shortNameInvalid": "২–১২ অক্ষর, শুধু ইংরেজি অক্ষর ও সংখ্যা",
+  "memberLoginShortName": "সমিতির শর্ট নেম",
+  "memberLoginShortNameHint": "সমিতির শর্ট নেম লিখুন (যেমন SSF)",
+  "memberLoginConfirmOrg": "লগইন করছেন",
+  "memberLoginContinue": "এগিয়ে যান",
+  "memberLoginChangeOrg": "সমিতি পরিবর্তন",
+  "memberShareShortName": "সদস্যরা লগইনে এই শর্ট নেম টাইপ করবে",
+  "syncStatusSynced": "সিঙ্ক হয়েছে",
+  "syncStatusSyncing": "সিঙ্ক হচ্ছে…",
+  "syncStatusConnecting": "সংযোগ হচ্ছে…",
+  "syncStatusError": "সিঙ্ক ত্রুটি",
+  "syncStatusOffline": "অফলাইন",
+  "settingsTabOrganization": "সংস্থা",
+  "settingsTabReceipt": "রসিদ",
+  "settingsTabMemberApp": "সদস্য অ্যাপ",
+  "settingsTabSystem": "সিস্টেম",
+  "setShortNameForLogin": "সদস্য লগইনের জন্য শর্ট নেম সেট করুন",
+  "addLogo": "লোগো যোগ করুন",
+  "removeLogo": "লোগো সরান",
+  "signatureOnReceipts": "রসিদের নিচে দেখাবে",
+  "tapAddSignature": "স্বাক্ষরের ছবি যোগ করতে ট্যাপ করুন",
+  "removeSignature": "স্বাক্ষর সরান",
+  "memberDashboardSettings": "সদস্য ড্যাশবোর্ড",
+  "memberDashboardSettingsSubtitle": "সদস্যরা কী দেখতে পাবে",
+  "coopCurrentMonth": "সমিতির চলতি মাস",
+  "coopTotalCollection": "সমিতির মোট জমা",
+  "coopTotalDue": "সমিতির মোট বকেয়া",
+  "membersWithDueList": "কার কার বকেয়া আছে",
+  "backupExportHint": "ব্যাকআপের জন্য সব ডেটা JSON ফাইলে এক্সপোর্ট করুন। পরে পুনরুদ্ধার করতে পারবেন।",
+  "importBackupTitle": "ব্যাকআপ ইম্পোর্ট",
+  "importBackupMessage": "ব্যাকআপ ফাইল থেকে ডেটা ইম্পোর্ট হবে। একই UUID থাকলে মার্জ হবে। চালিয়ে যাবেন?",
+  "import": "ইম্পোর্ট",
+  "couldNotReadBackup": "ব্যাকআপ ফাইল পড়া যায়নি",
+  "saveMember": "সদস্য সংরক্ষণ",
+  "updateMember": "সদস্য আপডেট",
+  "myTotalPaid": "আমার মোট জমা",
+  "cooperativeSummary": "সমিতির সারাংশ",
+  "recentCooperativeDeposits": "সমিতির সাম্প্রতিক ডিপোজিট",
+  "copyPhoneNumber": "ফোন নম্বর কপি",
+  "phoneCopied": "ফোন নম্বর কপি হয়েছে",
+  "changeProfilePhoto": "প্রোফাইল ছবি পরিবর্তন",
+  "profilePhotoUpdated": "প্রোফাইল ছবি আপডেট হয়েছে",
+  "canCollectDeposits": "জমা সংগ্রহ করতে পারবে",
+  "canCollectDepositsHint": "এই সদস্য অন্য সদস্যদের জমা রেকর্ড করতে পারবে",
+  "collectDeposit": "জমা সংগ্রহ",
+  "signUpSubtitle": "শুরু করতে আপনার সমবায় নিবন্ধন করুন",
+  "notifications": "নটিফিকেশন",
+  "notificationsSubtitle": "জমা ও স্মরণকারী",
+  "dueReminders": "বকেয়া স্মরণ",
+  "dueRemindersSubtitle": "প্রতি মাসের ১০ ও ২০ তারিখে স্মরণ",
+  "notificationDepositTitle": "জমা রেকর্ড হয়েছে",
+  "notificationDepositBody": "পরিমাণ: {amount} টাকা · রসিদ #{receipt}",
+  "@notificationDepositBody": {
+    "placeholders": {
+      "amount": {"type": "int"},
+      "receipt": {"type": "int"}
+    }
+  },
+  "sendAnnouncement": "ঘোষণা পাঠান",
+  "sendAnnouncementSubtitle": "অ্যাপ খোলা থাকলে সদস্যরা নটিফিকেশন পাবে (Blaze লাগে না)",
+  "announcementTitle": "শিরোনাম",
+  "announcementMessage": "বার্তা",
+  "send": "পাঠান",
+  "announcementSent": "{total} জনের মধ্যে {sent} জনকে পাঠানো হয়েছে",
+  "announcementPublished": "ঘোষণা প্রকাশিত। সদস্যরা অনলাইনে থাকলে নটিফিকেশন পাবে।",
+  "@announcementSent": {
+    "placeholders": {
+      "sent": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  }
+}
+
+

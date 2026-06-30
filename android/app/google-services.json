@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "522044625756",
+    "project_id": "coop-app-firebase",
+    "storage_bucket": "coop-app-firebase.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:522044625756:android:a0592821b7c0bfc842a799",
+        "android_client_info": {
+          "package_name": "com.linax.coop_ssf"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB0GIqmb22q3r--k-SFJpDm4qEPJ-XDfRs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
+

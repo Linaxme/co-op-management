@@ -1,0 +1,140 @@
+rules_version = '2';
+
+service cloud.firestore {
+
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function userDoc() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+
+    function userCoopId() {
+      return userDoc().coopId;
+    }
+
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && userDoc().role == 'admin';
+    }
+
+    function isMember() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && userDoc().role == 'member';
+    }
+
+    function memberUuid() {
+      return userDoc().memberUuid;
+    }
+
+    function belongsToCoop(coopId) {
+      return isSignedIn() && userCoopId() == coopId;
+    }
+
+    // Legacy single-tenant data (read for migration; admin only)
+    match /_meta/cooperative {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    match /members/{docId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    match /deposits/{docId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    match /organizations/{orgId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    match /settings/{docId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    match /cooperatives/{coopId} {
+      allow read: if true;
+      allow create: if isSignedIn()
+        && request.resource.data.adminUid == request.auth.uid
+        && request.resource.data.coopCode is string;
+      allow update: if belongsToCoop(coopId) && isAdmin();
+      allow delete: if false;
+
+      match /members/{docId} {
+        allow read: if belongsToCoop(coopId) && (
+          isAdmin() || (isMember() && resource.data.uuid == memberUuid())
+        );
+        allow create, update, delete: if belongsToCoop(coopId) && isAdmin();
+      }
+
+      match /deposits/{docId} {
+        allow read: if belongsToCoop(coopId) && (
+          isAdmin() || (isMember() && resource.data.memberUuid == memberUuid())
+        );
+        allow create, update, delete: if belongsToCoop(coopId) && isAdmin();
+      }
+
+      match /settings/{docId} {
+        allow read: if belongsToCoop(coopId) && isSignedIn();
+        allow create, update: if belongsToCoop(coopId) && isAdmin();
+        allow delete: if false;
+      }
+
+      match /announcements/{docId} {
+        allow read: if belongsToCoop(coopId) && isSignedIn();
+        allow create: if belongsToCoop(coopId) && isAdmin();
+        allow update, delete: if false;
+      }
+    }
+
+    match /users/{userId} {
+      allow read: if isSignedIn() && request.auth.uid == userId;
+
+      allow create: if isSignedIn() && (
+        (request.auth.uid == userId
+          && request.resource.data.role == 'admin'
+          && request.resource.data.coopId is string
+          && request.resource.data.coopCode is string)
+        || (isAdmin()
+          && request.resource.data.role == 'member'
+          && request.resource.data.coopId == userCoopId()
+          && request.resource.data.keys().hasAll(['role', 'memberUuid', 'phoneNormalized', 'email', 'coopId']))
+      );
+
+      // Admin updates own profile (legacy migration adds coopId)
+      allow update: if isSignedIn() && request.auth.uid == userId
+        && resource.data.role == 'admin'
+        && request.resource.data.role == 'admin';
+
+      // Admin updates member accounts in same cooperative
+      allow update: if isAdmin()
+        && resource.data.role == 'member'
+        && request.resource.data.role == 'member'
+        && request.resource.data.coopId == userCoopId();
+
+      // Legacy member adds coopId to own profile after admin migration
+      allow update: if isSignedIn() && request.auth.uid == userId
+        && resource.data.role == 'member'
+        && request.resource.data.role == 'member'
+        && !('coopId' in resource.data)
+        && request.resource.data.coopId is string;
+
+      // Member or admin updates own FCM token for push notifications
+      allow update: if isSignedIn() && request.auth.uid == userId
+        && request.resource.data.diff(resource.data).affectedKeys()
+            .hasOnly(['fcmToken', 'fcmUpdatedAt']);
+
+      allow delete: if false;
+    }
+  }
+}

@@ -1,0 +1,414 @@
+{
+  "@@locale": "en",
+  "appTitle": "Cooperative Management",
+  "@appTitle": {
+    "description": "Application title"
+  },
+  "dashboard": "Dashboard",
+  "members": "Members",
+  "due": "Due",
+  "reports": "Reports",
+  "settings": "Settings",
+  "trash": "Trash",
+  "addDeposit": "Add Deposit",
+  "addMember": "Add Member",
+  "editMember": "Edit Member",
+  "memberDetails": "Member Details",
+  "dueReport": "Due Report",
+  "save": "Save",
+  "cancel": "Cancel",
+  "delete": "Delete",
+  "edit": "Edit",
+  "confirm": "Confirm",
+  "required": "Required",
+  "search": "Search",
+  "searchBy": "Search by name / member id / phone",
+  "totalCollection": "Total Collection",
+  "totalDue": "Total Due",
+  "collection": "Collection",
+  "currentMonth": "Current Month ({month})",
+  "@currentMonth": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "monthPaymentStatus": "Payment Status ({month})",
+  "@monthPaymentStatus": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "collectionByMonth": "Collection by Month",
+  "noMembersYet": "No members yet",
+  "noMembersFound": "No members found",
+  "tapToAddFirstMember": "Tap + to add your first member",
+  "addFirstMember": "Add First Member",
+  "tryDifferentSearch": "Try a different search term",
+  "noDueMembers": "No Due Members",
+  "allMembersUpToDate": "All members are up to date with their payments! 🎉",
+  "noDue": "No due",
+  "months": "Months",
+  "memberIdNumber": "Member ID Number",
+  "name": "Name",
+  "phone": "Phone",
+  "phoneOptional": "Phone (optional)",
+  "address": "Address",
+  "addressOptional": "Address (optional)",
+  "nidNumber": "NID Number",
+  "nidNumberOptional": "NID Number (optional)",
+  "monthlyAmount": "Monthly Amount (BDT)",
+  "addPhoto": "Add Photo",
+  "removePhoto": "Remove Photo",
+  "memberTypeNameOrId": "Member (type name or ID)",
+  "memberCannotBeChanged": "Member (cannot be changed)",
+  "date": "Date",
+  "amount": "Amount (BDT)",
+  "fromMonth": "From Month",
+  "toMonth": "To Month",
+  "toMonthOptional": "To Month (Optional)",
+  "selectMonth": "Select month",
+  "selectMonthOptional": "Select month (optional)",
+  "noneSingleMonth": "None (Single Month)",
+  "paymentMethod": "Payment Method",
+  "cash": "Cash",
+  "bkash": "bKash",
+  "nagad": "Nagad",
+  "bank": "Bank",
+  "receivedBy": "Received By",
+  "confirmDeposit": "Confirm Deposit",
+  "depositAmount": "Deposit amount: {amount}",
+  "@depositAmount": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "member": "Member: {name}",
+  "@member": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "confirmGenerateReceipt": "Do you want to confirm and generate receipt?",
+  "confirmGenerateReceiptButton": "Confirm & Generate Receipt",
+  "depositConfirmed": "Deposit confirmed. Receipt generated.",
+  "depositUpdated": "Deposit updated successfully",
+  "error": "Error",
+  "errorLoadingMember": "Error loading member",
+  "errorLoadingMembers": "Error loading members",
+  "invalidImagePath": "Invalid image path",
+  "selectedImageNotFound": "Selected image file not found",
+  "errorCheckingFile": "Error checking file: {error}",
+  "@errorCheckingFile": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorAccessingDirectory": "Error accessing directory: {error}",
+  "@errorAccessingDirectory": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorCreatingFolder": "Error creating folder: {error}",
+  "@errorCreatingFolder": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "errorSavingImage": "Error saving image: {error}",
+  "@errorSavingImage": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "unexpectedError": "Unexpected error: {error}",
+  "@unexpectedError": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "memberSaved": "Member saved successfully",
+  "memberUpdated": "Member updated successfully",
+  "deleteMember": "Delete Member",
+  "deleteMemberConfirm": "Are you sure you want to delete \"{name}\"? This will move the member to trash.",
+  "@deleteMemberConfirm": {
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "memberDeleted": "Member deleted successfully",
+  "memberRestored": "Member restored successfully",
+  "memberPermanentlyDeleted": "Member permanently deleted",
+  "depositDeleted": "Deposit deleted successfully",
+  "depositRestored": "Deposit restored successfully",
+  "depositPermanentlyDeleted": "Deposit permanently deleted",
+  "failedToLoadOrganization": "Failed to load organization",
+  "generalSettings": "General Settings",
+  "organizationNameAndAddress": "Organization name and address",
+  "organizationName": "Organization Name",
+  "enterOrganizationName": "Enter organization name",
+  "organizationAddress": "Organization Address",
+  "enterOrganizationAddress": "Enter organization address",
+  "brandingIdentity": "Branding & Identity",
+  "logoAndSignature": "Logo and signature for documents",
+  "logo": "Logo",
+  "usedInReceiptsAndReports": "Used in receipts and reports",
+  "signature": "Signature",
+  "receiptConfiguration": "Receipt Configuration",
+  "receiptSettings": "Receipt prefix and serial number settings",
+  "receiptPrefix": "Receipt Prefix",
+  "defaultReceivedBy": "Default Received By",
+  "appearance": "Appearance",
+  "themeAndLanguage": "Theme mode and language settings",
+  "themeMode": "Theme Mode",
+  "light": "Light",
+  "dark": "Dark",
+  "auto": "Auto",
+  "language": "Language",
+  "bengali": "বাংলা",
+  "english": "English",
+  "dataManagement": "Data Management",
+  "backupAndRestore": "Backup and restore your data",
+  "exportBackup": "Export Backup",
+  "importBackup": "Import Backup",
+  "saveAllSettings": "Save All Settings",
+  "settingsSaved": "Settings saved successfully",
+  "backupExported": "Backup exported successfully",
+  "backupImported": "Backup imported successfully",
+  "errorPickingImage": "Error picking image: {error}",
+  "@errorPickingImage": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "annualReport": "Annual Report",
+  "yearWiseSummary": "Year-wise collection summary",
+  "memberReport": "Member Report",
+  "individualMemberDetails": "Individual member details and reports",
+  "monthlyReport": "Monthly Report",
+  "monthWiseCollection": "Month-wise collection and member status",
+  "generatePdf": "Generate PDF",
+  "exportCsv": "Export CSV",
+  "exportExcel": "Export Excel",
+  "selectYear": "Select Year",
+  "selectMember": "Select Member",
+  "selectMonth": "Select Month",
+  "reportGenerated": "Report generated successfully",
+  "reportExported": "Report exported successfully",
+  "deletedMembers": "Deleted Members",
+  "deletedDeposits": "Deleted Deposits",
+  "restore": "Restore",
+  "permanentDelete": "Permanent Delete",
+  "emptyTrash": "Empty Trash",
+  "emptyTrashConfirm": "Are you sure you want to permanently delete all items in trash? This action cannot be undone.",
+  "trashEmptied": "Trash emptied successfully",
+  "noDeletedMembers": "No deleted members",
+  "noDeletedDeposits": "No deleted deposits",
+  "memberId": "Member ID",
+  "phoneLabel": "Phone: {phone}",
+  "@phoneLabel": {
+    "placeholders": {
+      "phone": {
+        "type": "String"
+      }
+    }
+  },
+  "addressLabel": "Address: {address}",
+  "@addressLabel": {
+    "placeholders": {
+      "address": {
+        "type": "String"
+      }
+    }
+  },
+  "nidLabel": "NID: {nid}",
+  "@nidLabel": {
+    "placeholders": {
+      "nid": {
+        "type": "String"
+      }
+    }
+  },
+  "monthlyAmountLabel": "Monthly Amount: {amount}",
+  "@monthlyAmountLabel": {
+    "placeholders": {
+      "amount": {
+        "type": "String"
+      }
+    }
+  },
+  "balanceSummary": "Balance Summary",
+  "totalDeposited": "Total Deposited",
+  "expectedTotal": "Expected Total",
+  "netDueAdvance": "Net Due/Advance",
+  "deposits": "Deposits",
+  "filterByDate": "Filter by Date",
+  "all": "All",
+  "thisMonth": "This Month",
+  "lastMonth": "Last Month",
+  "customRange": "Custom Range",
+  "selectStartDate": "Select Start Date",
+  "selectEndDate": "Select End Date",
+  "depositHistory": "Deposit History",
+  "noDeposits": "No deposits",
+  "receiptNumber": "Receipt Number",
+  "method": "Method",
+  "reason": "Reason",
+  "duplicateDepositError": "Deposit already exists for this month: {month}. Multiple deposits for the same month are not allowed.",
+  "@duplicateDepositError": {
+    "placeholders": {
+      "month": {
+        "type": "String"
+      }
+    }
+  },
+  "duplicateDepositsError": "Deposits already exist for these months: {months}. Multiple deposits for the same month are not allowed.",
+  "@duplicateDepositsError": {
+    "placeholders": {
+      "months": {
+        "type": "String"
+      }
+    }
+  },
+  "adminLogin": "Admin",
+  "memberLogin": "Member",
+  "loginWelcome": "Welcome",
+  "loginSubtitleMember": "Sign in with your organization short name",
+  "loginSubtitleAdmin": "Sign in to manage your cooperative",
+  "loginSwitchToAdmin": "Administrator login",
+  "loginSwitchToMember": "Member login",
+  "email": "Email",
+  "password": "Password",
+  "pin": "PIN",
+  "login": "Login",
+  "logout": "Logout",
+  "loginFailed": "Login failed. Please check your credentials.",
+  "passwordLengthHint": "Password must be at least 6 characters",
+  "defaultMemberPassword": "Default Member Password",
+  "defaultMemberPasswordHint": "Used when creating new member login accounts",
+  "changePassword": "Change Password",
+  "currentPassword": "Current Password",
+  "newPassword": "New Password",
+  "confirmPassword": "Confirm Password",
+  "passwordMismatch": "Passwords do not match",
+  "passwordChanged": "Password changed successfully",
+  "myProfile": "My Profile",
+  "myDue": "My Due",
+  "initialPin": "Initial PIN",
+  "resetPin": "Reset PIN (optional)",
+  "resetPinHint": "Leave blank to keep current PIN",
+  "phoneAlreadyUsed": "This phone number is already registered",
+  "noDueAmount": "No due amount. You are up to date.",
+  "errorLoadingData": "Failed to load data",
+  "theme": "Theme",
+  "themeSystem": "System",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "signUp": "Sign Up",
+  "signUpTitle": "Register Cooperative",
+  "alreadyHaveAccount": "Already have an account? Login",
+  "dontHaveAccount": "New cooperative? Sign Up",
+  "cooperativeAlreadyRegistered": "A cooperative is already registered. Please login.",
+  "signUpFailed": "Sign up failed. Please try again.",
+  "memberLoginHint": "Use your phone number as username and the default password from admin.",
+  "signUpSuccess": "Cooperative registered successfully",
+  "organizationShortName": "Organization Short Name",
+  "organizationShortNameHint": "e.g. SSF, BRAC",
+  "organizationShortNameHelper": "Members type this on login (2–12 letters/numbers)",
+  "shortNameTaken": "This short name is already taken",
+  "shortNameInvalid": "Use 2–12 letters or numbers only",
+  "memberLoginShortName": "Organization Short Name",
+  "memberLoginShortNameHint": "Type your cooperative short name (e.g. SSF)",
+  "memberLoginConfirmOrg": "Logging in to",
+  "memberLoginContinue": "Continue",
+  "memberLoginChangeOrg": "Change organization",
+  "memberShareShortName": "Members type this short name on login",
+  "syncStatusSynced": "Synced",
+  "syncStatusSyncing": "Syncing…",
+  "syncStatusConnecting": "Connecting…",
+  "syncStatusError": "Sync error",
+  "syncStatusOffline": "Offline",
+  "settingsTabOrganization": "Organization",
+  "settingsTabReceipt": "Receipt",
+  "settingsTabMemberApp": "Member app",
+  "settingsTabSystem": "System",
+  "setShortNameForLogin": "Set a short name for member login",
+  "addLogo": "Add Logo",
+  "removeLogo": "Remove Logo",
+  "signatureOnReceipts": "Appears at the bottom of receipts",
+  "tapAddSignature": "Tap to add signature image",
+  "removeSignature": "Remove Signature",
+  "memberDashboardSettings": "Member Dashboard",
+  "memberDashboardSettingsSubtitle": "What members can see",
+  "coopCurrentMonth": "Cooperative current month",
+  "coopTotalCollection": "Cooperative total collection",
+  "coopTotalDue": "Cooperative total due",
+  "membersWithDueList": "Members with due list",
+  "backupExportHint": "Export all your data to a JSON file for backup. You can restore it later.",
+  "importBackupTitle": "Import Backup",
+  "importBackupMessage": "This will import data from the backup file. Existing data with the same UUID will be merged. Continue?",
+  "import": "Import",
+  "couldNotReadBackup": "Could not read backup file",
+  "saveMember": "Save Member",
+  "updateMember": "Update Member",
+  "myTotalPaid": "My Total Paid",
+  "cooperativeSummary": "Cooperative Summary",
+  "recentCooperativeDeposits": "Recent Cooperative Deposits",
+  "copyPhoneNumber": "Copy Phone Number",
+  "phoneCopied": "Phone number copied",
+  "changeProfilePhoto": "Change profile photo",
+  "profilePhotoUpdated": "Profile photo updated",
+  "canCollectDeposits": "Can collect deposits",
+  "canCollectDepositsHint": "Allow this member to record deposits for others",
+  "collectDeposit": "Collect Deposit",
+  "signUpSubtitle": "Register your cooperative to get started",
+  "notifications": "Notifications",
+  "notificationsSubtitle": "Deposits and reminders",
+  "dueReminders": "Due reminders",
+  "dueRemindersSubtitle": "Remind on the 10th and 20th of each month",
+  "notificationDepositTitle": "Deposit recorded",
+  "notificationDepositBody": "Amount: {amount} BDT · Receipt #{receipt}",
+  "@notificationDepositBody": {
+    "placeholders": {
+      "amount": {"type": "int"},
+      "receipt": {"type": "int"}
+    }
+  },
+  "sendAnnouncement": "Send Announcement",
+  "sendAnnouncementSubtitle": "Members get a notification when the app is open (no Blaze plan needed)",
+  "announcementTitle": "Title",
+  "announcementMessage": "Message",
+  "send": "Send",
+  "announcementSent": "Sent to {sent} of {total} members",
+  "announcementPublished": "Announcement published. Members will be notified when online.",
+  "@announcementSent": {
+    "placeholders": {
+      "sent": {"type": "int"},
+      "total": {"type": "int"}
+    }
+  }
+}
+
+
